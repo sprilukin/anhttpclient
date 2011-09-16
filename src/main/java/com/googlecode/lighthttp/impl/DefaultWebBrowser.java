@@ -145,15 +145,13 @@ public class DefaultWebBrowser implements WebBrowser {
      * @param threadSafe whether httpclient will be thread safe
      */
     private void initHttpClient(boolean threadSafe) {
-        HttpParams httpParams = getBasicHttpParams();
-
         if (threadSafe) {
-            connectionManager = new ThreadSafeClientConnManager(httpParams, getBasicSchemeRegistry());
+            connectionManager = new ThreadSafeClientConnManager(getBasicSchemeRegistry());
         } else {
-            connectionManager = new SingleClientConnManager(httpParams, getBasicSchemeRegistry());
+            connectionManager = new SingleClientConnManager(getBasicSchemeRegistry());
         }
 
-        httpClient = new DefaultHttpClient(connectionManager, httpParams);
+        httpClient = new DefaultHttpClient(connectionManager, getBasicHttpParams());
         addGZIPResponseInterceptor();
     }
 
