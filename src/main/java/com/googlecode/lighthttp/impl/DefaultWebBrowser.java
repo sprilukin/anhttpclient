@@ -14,19 +14,13 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.cookie.params.CookieSpecPNames;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.conn.SingleClientConnManager;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.*;
@@ -58,15 +52,21 @@ public class DefaultWebBrowser implements WebBrowser {
     public static final int DEFAULT_RETRY_COUNT = 3;
     public static final int DEFAULT_SOCKET_TIMEOUT = 60000;
     public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
+    public static final String DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME =
+            "com.googlecode.lighthttp.impl.ClientConnectionManagerFactoryImpl";
 
     protected HttpClient httpClient;
     protected CookieStore cookieStore = new BasicCookieStore();
-    protected ClientConnectionManager connectionManager;
     protected Map<String, String> defaultHeaders = new HashMap<String, String>();
     protected int retryCount = DEFAULT_RETRY_COUNT;
     protected int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
     protected int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     protected ThreadLocal<HttpRequestBase> httpRequest = new ThreadLocal<HttpRequestBase>();
+
+    private String clientConnectionFactoryClassName = DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME;
+    private boolean threadSafe = false;
+    private boolean initialized = false;
+
 
     static class GzipDecompressingEntity extends HttpEntityWrapper {
        public GzipDecompressingEntity(final HttpEntity entity) {
@@ -87,11 +87,15 @@ public class DefaultWebBrowser implements WebBrowser {
        }
     }
 
-    private SchemeRegistry getBasicSchemeRegistry() {
-        SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-        schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
-        return schemeRegistry;
+    /**
+     * Allows to set httpClient implementation directly
+     * @param httpClient instance of {@link HttpClient}
+     */
+    public void setHttpClient(HttpClient httpClient) {
+        synchronized (this.getClass()) {
+            this.httpClient = httpClient;
+            this.initialized = false;
+        }
     }
 
     private HttpParams getBasicHttpParams() {
@@ -101,34 +105,40 @@ public class DefaultWebBrowser implements WebBrowser {
         params.setParameter(CoreProtocolPNames.USER_AGENT, DEFAULT_USER_AGENT);
         params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
         params.setParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false);
+        params.setParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME, clientConnectionFactoryClassName);
+
+        /*Custom parameter for implementation of {@link ClientConnectionManagerFactory}*/
+        params.setParameter(ClientConnectionManagerFactoryImpl.THREAD_SAFE_CONNECTION_MANAGER, this.threadSafe);
 
         return params;
     }
 
     private void addGZIPResponseInterceptor() {
-      ((DefaultHttpClient)httpClient).addResponseInterceptor(new HttpResponseInterceptor() {
-          public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
-              HttpEntity entity = response.getEntity();
-              Header contentEncodingHeader = entity.getContentEncoding();
-              if (contentEncodingHeader != null) {
-                  HeaderElement[] codecs = contentEncodingHeader.getElements();
-                  for (int i = 0; i < codecs.length; i++) {
-                      if (codecs[i].getName().equalsIgnoreCase(HttpConstants.GZIP)) {
-                          response.setEntity(new GzipDecompressingEntity(response.getEntity()));
-                          return;
-                      }
-                  }
-              }
-          }
-      });
+        if (AbstractHttpClient.class.isAssignableFrom(httpClient.getClass())) {
+            ((AbstractHttpClient)httpClient).addResponseInterceptor(new HttpResponseInterceptor() {
+                public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
+                    HttpEntity entity = response.getEntity();
+                    Header contentEncodingHeader = entity.getContentEncoding();
+                    if (contentEncodingHeader != null) {
+                        HeaderElement[] codecs = contentEncodingHeader.getElements();
+                        for (int i = 0; i < codecs.length; i++) {
+                            if (codecs[i].getName().equalsIgnoreCase(HttpConstants.GZIP)) {
+                                response.setEntity(new GzipDecompressingEntity(response.getEntity()));
+                                return;
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     /**
      * Default constructor
-     * apache http client will initialized here as thread safe http client
+     * apache http client will initialized here as not thread safe http client
      */
     public DefaultWebBrowser() {
-        initHttpClient(false);
+        this(false);
     }
 
     /**
@@ -137,22 +147,25 @@ public class DefaultWebBrowser implements WebBrowser {
      * and not thread safe - if {@code false}
      */
     public DefaultWebBrowser(boolean threadSafe) {
-        initHttpClient(threadSafe);
+        this.threadSafe = threadSafe;
     }
 
     /**
-     * Inisialize new instance of httpClient
-     * @param threadSafe whether httpclient will be thread safe
+     * Initialize new instance of httpClient
      */
-    private void initHttpClient(boolean threadSafe) {
-        if (threadSafe) {
-            connectionManager = new ThreadSafeClientConnManager(getBasicSchemeRegistry());
-        } else {
-            connectionManager = new SingleClientConnManager(getBasicSchemeRegistry());
-        }
+    private void initHttpClient() {
+        if (!this.initialized) {
+            synchronized (DefaultWebBrowser.class) {
+                if (!this.initialized) {
+                    if (httpClient == null) {
+                        httpClient = new DefaultHttpClient(null, getBasicHttpParams());
+                    }
 
-        httpClient = new DefaultHttpClient(connectionManager, getBasicHttpParams());
-        addGZIPResponseInterceptor();
+                    addGZIPResponseInterceptor();
+                    this.initialized = true;
+                }
+            }
+        }
     }
 
     /**
@@ -189,7 +202,9 @@ public class DefaultWebBrowser implements WebBrowser {
         //       new DefaultHttpMethodRetryHandler(retryCount, false));
         //httpMethodBase.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
         //        new DefaultHttpMethodRetryHandler(retryCount, true));
-        ((DefaultHttpClient)httpClient).setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(retryCount, true));
+        if (AbstractHttpClient.class.isAssignableFrom(httpClient.getClass())) {
+            ((AbstractHttpClient)httpClient).setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(retryCount, true));
+        }
         HttpConnectionParams.setSoTimeout(httpClient.getParams(), socketTimeout);
     }
 
@@ -327,6 +342,8 @@ public class DefaultWebBrowser implements WebBrowser {
      * {@inheritDoc}
      */
     public WebResponse getResponse(WebRequest webRequest, String charset) throws IOException {
+        initHttpClient();
+
         switch (webRequest.getRequestMethod()) {
             case GET:
                 httpRequest.set(createGetMethod(webRequest));
@@ -442,6 +459,7 @@ public class DefaultWebBrowser implements WebBrowser {
      * {@inheritDoc}
      */
     public WebBrowser setConnectionTimeout(Integer connectionTimeout) {
+        initHttpClient();
         this.connectionTimeout = connectionTimeout;
         httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
 
@@ -508,6 +526,7 @@ public class DefaultWebBrowser implements WebBrowser {
      * {@inheritDoc}
      */
     public WebBrowser setProxy(String url, int port) {
+        initHttpClient();
         HttpHost proxy = new HttpHost(url, port);
         httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 
@@ -518,6 +537,7 @@ public class DefaultWebBrowser implements WebBrowser {
      * {@inheritDoc}
      */
     public WebBrowser clearProxy() {
+        initHttpClient();
         httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
 
         return this;
