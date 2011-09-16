@@ -12,12 +12,12 @@ import java.util.Map;
 
 /**
  * Thread safe implementation of {@link com.googlecode.lighthttp.WebBrowser}
- * Difference from ThreadLocalWebBrowser is that this implementation share cookies
+ * Difference from ThreadLocalWebBrowser is that this implementation share cookies and other params
  *
  * @author Sergey Pilukin
  * @since 09.02.2009 20:57:29
  */
-public class MultiThreadWebBrowser implements WebBrowser {
+public final class MultiThreadWebBrowser implements WebBrowser {
     private Map<String, WebBrowser> webBrowsersList = new HashMap<String, WebBrowser>(); 
 
     protected final Map<String, String> defaultHeaders = new HashMap<String, String>();
