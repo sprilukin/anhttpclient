@@ -63,6 +63,7 @@ public class DefaultWebBrowser implements WebBrowser {
     protected int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     protected ThreadLocal<HttpRequestBase> httpRequest = new ThreadLocal<HttpRequestBase>();
 
+    private HttpParams httpParams;
     private String clientConnectionFactoryClassName = DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME;
     private boolean threadSafe = false;
     private boolean initialized = false;
@@ -98,6 +99,25 @@ public class DefaultWebBrowser implements WebBrowser {
         }
     }
 
+    /**
+     * Allows to set {@link HttpParams}
+     * Will take effect only if httpClient is initialized inside DefaultWebBrowser
+     * @param httpParams {@HttpParams} to set.
+     */
+    public void setHttpParams(HttpParams httpParams) {
+        this.httpParams = httpParams;
+        if (this.httpParams != null && this.httpParams.getParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME) == null) {
+            this.httpParams.setParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME, clientConnectionFactoryClassName);
+        }
+
+        if (httpClient != null && httpClient instanceof DefaultHttpClient) {
+            synchronized (this.getClass()) {
+                httpClient = null;
+                this.initialized = false;
+            }
+        }
+    }
+
     private HttpParams getBasicHttpParams() {
         HttpParams params = new BasicHttpParams();
         params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
@@ -107,13 +127,13 @@ public class DefaultWebBrowser implements WebBrowser {
         params.setParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false);
         params.setParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME, clientConnectionFactoryClassName);
 
-        /*Custom parameter for implementation of {@link ClientConnectionManagerFactory}*/
+        /*Custom parameter to be used in implementation of {@link ClientConnectionManagerFactory}*/
         params.setParameter(ClientConnectionManagerFactoryImpl.THREAD_SAFE_CONNECTION_MANAGER, this.threadSafe);
 
         return params;
     }
 
-    private void addGZIPResponseInterceptor() {
+    private void addGZIPResponseInterceptor(HttpClient httpClient) {
         if (AbstractHttpClient.class.isAssignableFrom(httpClient.getClass())) {
             ((AbstractHttpClient)httpClient).addResponseInterceptor(new HttpResponseInterceptor() {
                 public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
@@ -121,8 +141,8 @@ public class DefaultWebBrowser implements WebBrowser {
                     Header contentEncodingHeader = entity.getContentEncoding();
                     if (contentEncodingHeader != null) {
                         HeaderElement[] codecs = contentEncodingHeader.getElements();
-                        for (int i = 0; i < codecs.length; i++) {
-                            if (codecs[i].getName().equalsIgnoreCase(HttpConstants.GZIP)) {
+                        for (HeaderElement codec : codecs) {
+                            if (codec.getName().equalsIgnoreCase(HttpConstants.GZIP)) {
                                 response.setEntity(new GzipDecompressingEntity(response.getEntity()));
                                 return;
                             }
@@ -155,13 +175,17 @@ public class DefaultWebBrowser implements WebBrowser {
      */
     private void initHttpClient() {
         if (!this.initialized) {
-            synchronized (DefaultWebBrowser.class) {
+            synchronized (this.getClass()) {
                 if (!this.initialized) {
                     if (httpClient == null) {
+                        if (httpParams == null) {
+                            httpParams = getBasicHttpParams();
+                        }
+
                         httpClient = new DefaultHttpClient(null, getBasicHttpParams());
+                        addGZIPResponseInterceptor(httpClient);
                     }
 
-                    addGZIPResponseInterceptor();
                     this.initialized = true;
                 }
             }
@@ -195,13 +219,8 @@ public class DefaultWebBrowser implements WebBrowser {
 
 
         // We use here DefaultHttpMethodRetryHandler with <b>true</b> parameter
-        // because we suppose that if method was successfully sended its headers
+        // because we suppose that if method was successfully sent its headers
         // it could also be retried
-        // TODO: test if this is correct behaviour
-        // httpMethodBase.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-        //       new DefaultHttpMethodRetryHandler(retryCount, false));
-        //httpMethodBase.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
-        //        new DefaultHttpMethodRetryHandler(retryCount, true));
         if (AbstractHttpClient.class.isAssignableFrom(httpClient.getClass())) {
             ((AbstractHttpClient)httpClient).setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(retryCount, true));
         }
@@ -240,7 +259,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private HttpResponse executeMethod(HttpUriRequest httpUriRequest) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: httpUriRequest.getAllHeaders()) {
-                log.debug("HTTP REQUEST HEADER: " + header.getName() + ":" + header.getValue());
+                log.debug("LIGHTHTTP REQUEST HEADER: " + header.getName() + ":" + header.getValue());
             }
         }
 
@@ -324,7 +343,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private WebResponse processResponse(HttpResponse response, HttpRequestBase httpMethodBase, String charset) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: response.getAllHeaders()) {
-                log.debug("HTTP RESPONSE HEADER: " + header.getName() + ":" + header.getValue());
+                log.debug("LIGHTHTTP RESPONSE HEADER: " + header.getName() + ":" + header.getValue());
             }
         }
 
@@ -355,25 +374,16 @@ public class DefaultWebBrowser implements WebBrowser {
 
         WebResponse resp;
 
-        //try {
-            HttpResponse response = null;
-            //try {
-                response = executeMethod(httpRequest.get());
-            //} finally {
-                if (response == null) {
-                    throw new IOException("An empty response received from server. Possible reason: host is offline");
-                }
+        HttpResponse response = null;
+        response = executeMethod(httpRequest.get());
+        if (response == null) {
+            throw new IOException("An empty response received from server. Possible reason: host is offline");
+        }
 
-                resp = processResponse(response, httpRequest.get(), charset);
-                if (log.isDebugEnabled()) {
-                    log.debug("HTTP REQUEST COMPLETED. SIZE: " + resp.getBytes().length);
-                }
-            //}
-        //} finally {
-            //TODO: how to release?
-            //httpMethodBase.releaseConnection();
-            //httpClient.getConnectionManager().releaseConnection();
-        //}
+        resp = processResponse(response, httpRequest.get(), charset);
+        if (log.isDebugEnabled()) {
+            log.debug("LIGHTHTTP REQUEST COMPLETED. SIZE: " + resp.getBytes().length);
+        }
 
         return resp;
     }
