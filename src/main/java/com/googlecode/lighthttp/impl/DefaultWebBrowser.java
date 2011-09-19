@@ -37,7 +37,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * Default implementation of {@link WebBrowser}
  * Has such configureable parameters:
- * - default headers    : Collection of HTTP headers which will be sended with every http request
+ * - default headers    : Collection of HTTP headers which will be sent with every http request
  * - retry count        : count of repeating http request if previous one was unsuccessful
  * - connection timeout : time in milliseconds which determine connection timeout of HTTP request
  * - socket timeout     : time in milliseconds which determine socket timeout of HTTP request

@@ -55,7 +55,7 @@ public interface WebBrowser {
     public WebResponse getResponse(WebRequest webRequest, String expectedResponseCharset) throws IOException;
 
     /**
-     * Return all http headers which are sended with every http request
+     * Return all http headers which are sent with every http request
      *
      * @return {@link Map<String, String>} with (name, value) pairs of http headers
      */
@@ -70,7 +70,7 @@ public interface WebBrowser {
     public String getHeader(String headerName);
 
     /**
-     * Add headers to web browser so they will be sended with every http request
+     * Add headers to web browser so they will be sent with every http request
      * of instance of web browser
      *
      * @param headers headers to add
@@ -79,7 +79,7 @@ public interface WebBrowser {
 
     /**
      * Add header to web browser specified by name and value so it
-     * will be sended with every http request
+     * will be sent with every http request
      * of instance of web browser
      *
      * @param name  name of the http header
@@ -142,14 +142,14 @@ public interface WebBrowser {
     public WebBrowser setConnectionTimeout(Integer connectionTimeout);
 
     /**
-     * Return list of cookies which are will be sended with every http request
+     * Return list of cookies which are will be sent with every http request
      *
-     * @return list of cookies which are will be sended with every http request
+     * @return list of cookies which are will be sent with every http request
      */
     public List<Cookie> getCookies();
 
     /**
-     * Adds {@link Cookie} which will be sended with every http request of
+     * Adds {@link Cookie} which will be sent with every http request of
      * web browser instance
      *
      * @param cookie {@link Cookie} to add
@@ -157,7 +157,7 @@ public interface WebBrowser {
     public WebBrowser addCookie(Cookie cookie);
 
     /**
-     * Adds list of {@link Cookie} which will be sended with every http request of
+     * Adds list of {@link Cookie} which will be sent with every http request of
      * web browser instance
      *
      * @param cookies list of cookies to be added
@@ -166,7 +166,7 @@ public interface WebBrowser {
 
     /**
      * Remove all cookies from web browser, so
-     * it will not send any cookie until it will be sended manually
+     * it will not send any cookie until it will be sent manually
      * or by some http response
      */
     public WebBrowser clearAllCookies();

@@ -9,7 +9,7 @@ package com.googlecode.lighthttp;
 public interface Cookie {
     /**
      * Return url of domain for which this
-     * cookie should be sended to server
+     * cookie should be sent to server
      *
      * @return url of domain
      */
@@ -17,7 +17,7 @@ public interface Cookie {
 
     /**
      * Sets url of domain for which this
-     * cookie should be sended to server
+     * cookie should be sent to server
      *
      * @param domain url of the domain
      */
@@ -52,7 +52,7 @@ public interface Cookie {
     public void setValue(String value);
 
     /**
-     * Return path within domain for which this cookie should be sended.
+     * Return path within domain for which this cookie should be sent.
      * For example if domain is:
      * <pre>
      *      http://somedomain.com
@@ -61,20 +61,20 @@ public interface Cookie {
      * <pre>
      *      /somepath
      * </pre>
-     * then cookie will be sended for all request which url starts from<br/>
+     * then cookie will be sent for all request which url starts from<br/>
      * <pre>
      *      http://somedomain.com/somepath
      * </pre>
      *
-     * @return path within domain for which this cookie should be sended.
+     * @return path within domain for which this cookie should be sent.
      */
     public String getPath();
 
     /**
-     * Sets path within domain for which this cookie should be sended.
+     * Sets path within domain for which this cookie should be sent.
      * See {@link #getPath()}
      *
-     * @param path path within domain for which this cookie should be sended
+     * @param path path within domain for which this cookie should be sent
      */
     public void setPath(String path);
 }

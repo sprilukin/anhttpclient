@@ -1,23 +1,18 @@
 package com.googlecode.lighthttp.impl;
 
-import com.googlecode.lighthttp.HttpConstants;
 import com.googlecode.lighthttp.RequestMethod;
 import com.googlecode.lighthttp.WebRequest;
-import com.googlecode.lighthttp.WebResponse;
 
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Wrapper under HTTP POST request
+ * Wrapper over HTTP POST request
  *
  * @author Sergey Pilukin
  * @since 25.04.2008 14:35:45
  */
-public final class HttpPostWebRequest implements WebRequest {
-    protected String url;
-    protected Map<String, String> headers = new HashMap<String, String>();
+public final class HttpPostWebRequest extends HttpGetWebRequest {
     protected Map<String, String> params = new HashMap<String, String>();
 
     public HttpPostWebRequest() {
@@ -36,64 +31,10 @@ public final class HttpPostWebRequest implements WebRequest {
     /**
      * {@inheritDoc}
      */
-    public String getUrl() {
-        return url;
-    }
-
-    public WebRequest setUrl(String url) {
-        this.url = url;
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public WebRequest addHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public WebRequest addHeader(String name, String value) {
-        headers.put(name, value);
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public WebRequest setReferer(String referer) {
-        headers.put(HttpConstants.REFERER_HEADER, referer);
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public WebRequest setReferer(WebResponse response)  throws MalformedURLException {
-        headers.put(HttpConstants.REFERER_HEADER, response.getUrl().toString());
-
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public Map<String, String> getRequestParams() {
-        return params;
+        Map<String, String> allParams = new HashMap<String, String>(super.getRequestParams());
+        allParams.putAll(params);
+        return allParams;
     }
 
     /**

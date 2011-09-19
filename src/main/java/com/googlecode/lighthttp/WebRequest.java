@@ -20,7 +20,7 @@ public interface WebRequest {
     public WebRequest setUrl(String url);
 
     /**
-     * Add http headers which will be sended with this and only
+     * Add http headers which will be sent with this and only
      * this web request. This headers will be added to
      * collection of default headers of web browser which
      * will execute this request and will rewrite default headers which
@@ -31,7 +31,7 @@ public interface WebRequest {
     public WebRequest addHeaders(Map<String, String> headers);
 
     /**
-     * Add http header which will be sended with this and only
+     * Add http header which will be sent with this and only
      * this web request. This header will be added to
      * collection of default headers of web browser which
      * will execute this request and will rewrite default header which
@@ -58,7 +58,7 @@ public interface WebRequest {
 
     /**
      * Set "Referer" header to request as url of
-     * passed {@link jhttpcrowler.core.utils.httpclient.WebResponse}
+     * passed {@link com.googlecode.lighthttp.WebResponse}
      *
      * @param response response which url will serve as referer header
      *
@@ -67,15 +67,15 @@ public interface WebRequest {
     public WebRequest setReferer(WebResponse response) throws MalformedURLException;
 
     /**
-     * Return colleaction of (name, value) pairs of parameters which
-     * will be sended to server when web browser will execute this web request.
+     * Return collection of (name, value) pairs of parameters which
+     * will be sent to server when web browser will execute this web request.
      *
      * @return collection of request params
      */
     public Map<String, String> getRequestParams();
 
     /**
-     * Add request params to this request, so they are will be sended to server
+     * Add request params to this request, so they are will be sent to server
      * when web browser will execute this request
      *
      * @param requestParams collection of (name, value) pairs of request params
@@ -83,7 +83,7 @@ public interface WebRequest {
     public WebRequest addParams(Map<String, String> requestParams);
 
     /**
-     * Add request parameter to this request, so it will be sended to server
+     * Add request parameter to this request, so it will be sent to server
      * when web browser will execute this request
      *
      * @param name  name of requets parameter

@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Sergey Prilukin
  * @since 08.04.2008 18:16:09
  */
-public final class HttpGetWebRequest implements WebRequest {
+public class HttpGetWebRequest implements WebRequest {
     public static final String QUERY_SIGN = "?";
     public static final String ESCAPED_QUERY_SIGN = "\\?";
     public static final String AMPERSAND_SIGN = "&";
