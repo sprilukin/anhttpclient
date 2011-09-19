@@ -296,7 +296,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private HttpResponse executeMethod(HttpUriRequest httpUriRequest) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: httpUriRequest.getAllHeaders()) {
-                log.debug("LIGHTHTTP REQUEST HEADER: " + header.getName() + ":" + header.getValue());
+                log.debug(String.format("LIGHTHTTP REQUEST HEADER: [%s: %s]", header.getName(), header.getValue()));
             }
         }
 
@@ -383,7 +383,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private WebResponse processResponse(HttpResponse response, HttpRequestBase httpMethodBase, String charset) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: response.getAllHeaders()) {
-                log.debug("LIGHTHTTP RESPONSE HEADER: " + header.getName() + ":" + header.getValue());
+                log.debug(String.format("LIGHTHTTP RESPONSE HEADER: [%s: %s]", header.getName(), header.getValue()));
             }
         }
 
@@ -428,7 +428,7 @@ public class DefaultWebBrowser implements WebBrowser {
 
         resp = processResponse(response, httpRequest.get(), charset);
         if (log.isDebugEnabled()) {
-            log.debug("LIGHTHTTP REQUEST COMPLETED. SIZE: " + resp.getBytes().length);
+            log.debug(String.format("LIGHTHTTP REQUEST COMPLETED. SIZE: %s", resp.getBytes().length));
         }
 
         return resp;

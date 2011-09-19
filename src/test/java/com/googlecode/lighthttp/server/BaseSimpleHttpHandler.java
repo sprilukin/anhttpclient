@@ -61,6 +61,8 @@ public abstract class BaseSimpleHttpHandler implements SimpleHttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         HttpExcahngeFacade httpExcahngeFacade = new HttpExcahngeFacade(httpExchange);
 
+        byte[] response = getResponse(httpExcahngeFacade);
+
         //Add headers
         if (headers != null && headers.size() > 0) {
             for (Map.Entry<String, String> entry: headers.entrySet()) {
@@ -68,7 +70,6 @@ public abstract class BaseSimpleHttpHandler implements SimpleHttpHandler {
             }
         }
 
-        byte[] response = getResponse(httpExcahngeFacade);
         httpExchange.sendResponseHeaders(getResponseCode(httpExcahngeFacade), response != null ? response.length : 0);
 
         if (response != null && response.length > 0) {

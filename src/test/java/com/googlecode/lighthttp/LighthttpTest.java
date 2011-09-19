@@ -34,11 +34,14 @@ import com.googlecode.lighthttp.server.SimpleHttpServer;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Tests http client
@@ -115,6 +118,37 @@ public class LighthttpTest {
         }).start();
 
         WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/get?param1=value1");
+        WebResponse resp = wb.getResponse(req);
+        server.stop();
+        assertEquals("Response from server is incorrect", responseText, resp.getText());
+    }
+
+    @Test
+    public void testGzipResponse() throws Exception {
+
+        final String responseText = "Hello from SimpleHttperver";
+
+        SimpleHttpServer server = new DefaultSimpleHttpServer();
+        server.addHandler("/gzip", new BaseSimpleHttpHandler() {
+            @Override
+            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+                setResponseHeader("Content-Encoding", "gzip");
+                setResponseHeader("Content-length", String.valueOf(responseText.length()));
+
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    OutputStream os = new GZIPOutputStream(baos);
+                    os.write(responseText.getBytes());
+                    os.flush();
+                    os.close();
+                    return baos.toByteArray();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+        WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/gzip");
         WebResponse resp = wb.getResponse(req);
         server.stop();
         assertEquals("Response from server is incorrect", responseText, resp.getText());
