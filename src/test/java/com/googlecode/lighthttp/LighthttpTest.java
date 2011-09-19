@@ -22,12 +22,17 @@
 
 package com.googlecode.lighthttp;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import com.googlecode.lighthttp.impl.DefaultWebBrowser;
 import com.googlecode.lighthttp.impl.HttpGetWebRequest;
 import com.googlecode.lighthttp.impl.HttpPostWebRequest;
+import com.googlecode.lighthttp.server.BaseSimpleHttpHandler;
+import com.googlecode.lighthttp.server.DefaultSimpleHttpServer;
+import com.googlecode.lighthttp.server.HttpExcahngeFacade;
+import com.googlecode.lighthttp.server.SimpleHttpServer;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -57,7 +62,7 @@ public class LighthttpTest {
         wb.setDefaultHeaders(defaultHeaders);
     }
 
-    @Test
+    @Ignore
     public void testHttpClient() {
         WebRequest req = new HttpGetWebRequest("http://google.com");
         WebResponse resp = null;
@@ -93,5 +98,33 @@ public class LighthttpTest {
         req.addParam("some_chars", "!@#$%^&*()_+|");
 
         WebResponse resp = wb.getResponse(req);
+    }
+
+    @Test
+    public void testUsingEmbeddedServer() throws Exception {
+
+        final String responseText = "Hello from SimpleHttperver";
+
+        SimpleHttpServer server = new DefaultSimpleHttpServer();
+        server.addHandler("/index/path", new BaseSimpleHttpHandler() {
+            @Override
+            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+                return responseText.getBytes();
+            }
+        }).start();
+
+        WebRequest req = new HttpGetWebRequest("http://localhost:8000/index/path?param1=value1");
+        WebResponse resp = wb.getResponse(req);
+
+        System.out.println("===== RESPONSE HEADRS ========");
+        for (String header : resp.getHeaders().keySet()) {
+            System.out.println(header + ": " + resp.getHeader(header));
+        }
+
+        System.out.println("\n===== RESPONSE TEXT ========");
+        System.out.println(resp.getText());
+
+        server.stop();
+        assertEquals("Response from server is incorrect", responseText, resp.getText());
     }
 }
