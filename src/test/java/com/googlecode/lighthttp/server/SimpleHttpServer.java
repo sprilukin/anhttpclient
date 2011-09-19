@@ -22,8 +22,6 @@
 
 package com.googlecode.lighthttp.server;
 
-import com.sun.net.httpserver.HttpHandler;
-
 import java.util.Map;
 
 /**

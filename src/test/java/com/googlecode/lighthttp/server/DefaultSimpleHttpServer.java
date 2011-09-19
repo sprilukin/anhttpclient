@@ -59,27 +59,26 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
 
         private void logRequest(HttpExchange httpExchange) {
             //request URI
-            System.out.println("SIMPLESERVER REQUEST URI: " + httpExchange.getRequestURI().toString());
+            System.out.println("=== SIMPLE-HTTP-SERVER REQUEST URI: " + httpExchange.getRequestURI().toString());
 
             //request headers
-            System.out.println("SIMPLESERVER REQUEST HEADERS: ");
+            System.out.println("=== SIMPLE-HTTP-SERVER REQUEST HEADERS: ");
             for (Map.Entry<String, List<String>> entry : httpExchange.getRequestHeaders().entrySet()) {
                 for (String value: entry.getValue()) {
-                    System.out.println(String.format("[%s: %s]", entry.getKey(), value));
+                    System.out.println(String.format("==== [%s: %s]", entry.getKey(), value));
                 }
             }
 
             //request method
-            System.out.println("SIMPLESERVER REQUEST METHOD: " + httpExchange.getRequestMethod());
+            System.out.println("=== SIMPLE-HTTP-SERVER REQUEST METHOD: " + httpExchange.getRequestMethod());
 
             //Writing request body
-            String request = null;
             try {
-                request = new String(IOUtils.toByteArray(httpExchange.getRequestBody()));
+                String request = new String(IOUtils.toByteArray(httpExchange.getRequestBody()));
                 if (!"".equals(request.trim())) {
-                    System.out.println("SIMPLESERVER REQUEST BODY: \r\n" + request);
+                    System.out.println("=== SIMPLE-HTTP-SERVER REQUEST BODY: \r\n" + request);
                 } else {
-                    System.out.println("SIMPLESERVER REQUEST BODY IS EMPTY");
+                    System.out.println("=== SIMPLE-HTTP-SERVER REQUEST BODY IS EMPTY");
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

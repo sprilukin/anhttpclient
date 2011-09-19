@@ -27,7 +27,8 @@ import com.sun.net.httpserver.HttpHandler;
 import java.util.Map;
 
 /**
- * TODO: add description
+ * Extension for {@link HttpHandler}
+ * which allows to manipulate HTTP headers
  *
  * @author Sergey Prilukin
  * @version $Id$
