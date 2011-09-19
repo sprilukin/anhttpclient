@@ -422,10 +422,9 @@ public class DefaultWebBrowser implements WebBrowser {
 
         WebResponse resp;
 
-        HttpResponse response = null;
-        response = executeMethod(httpRequest.get());
+        HttpResponse response = executeMethod(httpRequest.get());
         if (response == null) {
-            throw new IOException("An empty response received from server. Possible reason: host is offline");
+            throw new IOException("LIGHTHTTP: An empty response received from server. Possible reason: host is offline");
         }
 
         resp = processResponse(response, httpRequest.get(), charset);
