@@ -29,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,7 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
     public static final String SERVER_VERSION = "0.1";
     public static final String FULL_SERVER_NAME = SERVER_NAME + "/" + SERVER_VERSION;
     public static final int DEFAULT_PORT = 8000;
+    public static final String DEFAULT_HOST = "localhost";
 
     private HttpServer httpServer;
     private int port = DEFAULT_PORT;
@@ -109,13 +111,31 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
             synchronized (this) {
                 if (httpServer == null) {
                     try {
-                        httpServer = HttpServer.create(new InetSocketAddress(port), 0);
+                        httpServer = HttpServer.create();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    }
+
+                    boolean bound = false;
+
+                    while (!bound) {
+                        try {
+                            httpServer.bind(new InetSocketAddress(DEFAULT_HOST, port), 0);
+                            bound = true;
+                            System.out.println(String.format("=== SIMPLE-HTTP-SERVER ACCEPT CONNECTIONS ON PORT: %s", port));
+                        } catch (BindException e) {
+                            port++;
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }
         }
+    }
+
+    public String getBaseUrl() {
+        return (new StringBuilder()).append("http://").append(DEFAULT_HOST).append(":").append(port).toString();
     }
 
     public void start() {

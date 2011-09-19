@@ -38,4 +38,5 @@ public interface SimpleHttpServer {
     public SimpleHttpServer addHandler(String path, SimpleHttpHandler httpHandler);
     public SimpleHttpServer setDefaultResponseHeaders(Map<String, String> defaultHeaders);
     public SimpleHttpServer addResponseHeader(String name, String value);
+    public String getBaseUrl();
 }

@@ -23,8 +23,6 @@
 package com.googlecode.lighthttp;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import com.googlecode.lighthttp.impl.DefaultWebBrowser;
 import com.googlecode.lighthttp.impl.HttpGetWebRequest;
@@ -63,33 +61,6 @@ public class LighthttpTest {
     }
 
     @Ignore
-    public void testHttpClient() {
-        WebRequest req = new HttpGetWebRequest("http://google.com");
-        WebResponse resp = null;
-        try {
-            resp = wb.getResponse(req);
-        } catch (IOException e) {
-            e.printStackTrace();
-            fail();
-        }
-
-        System.out.println("===== HEADRS ========");
-        for (String header : resp.getHeaders().keySet()) {
-            System.out.println(header + ": " + resp.getHeader(header));
-        }
-
-        System.out.println("\n===== RESPONSE ========");
-        try {
-            System.out.println(resp.getText());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-            fail();            
-        }
-
-        assertNotNull(resp);
-    }
-
-    @Ignore
     public void testEmailInForm() throws Exception {
         WebRequest req = new HttpPostWebRequest("http://google.com");
         req.addParam("email", "sss@ggg.com");
@@ -101,7 +72,7 @@ public class LighthttpTest {
     }
 
     @Test
-    public void testUsingEmbeddedServer() throws Exception {
+    public void testGetRequest() throws Exception {
 
         final String responseText = "Hello from SimpleHttperver";
 
@@ -109,21 +80,13 @@ public class LighthttpTest {
         server.addHandler("/index/path", new BaseSimpleHttpHandler() {
             @Override
             protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+                assertEquals("Method should be GET", "GET", httpExcahngeFacade.getRequestMethod());
                 return responseText.getBytes();
             }
         }).start();
 
-        WebRequest req = new HttpGetWebRequest("http://localhost:8000/index/path?param1=value1");
+        WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/index/path?param1=value1");
         WebResponse resp = wb.getResponse(req);
-
-        System.out.println("===== RESPONSE HEADRS ========");
-        for (String header : resp.getHeaders().keySet()) {
-            System.out.println(header + ": " + resp.getHeader(header));
-        }
-
-        System.out.println("\n===== RESPONSE TEXT ========");
-        System.out.println(resp.getText());
-
         server.stop();
         assertEquals("Response from server is incorrect", responseText, resp.getText());
     }
