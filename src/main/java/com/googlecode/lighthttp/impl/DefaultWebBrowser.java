@@ -361,8 +361,7 @@ public class DefaultWebBrowser implements WebBrowser {
 
         if (nameValuePairList != null) {
             try {
-                HttpEntityEnclosingRequestBase methodPost = (HttpEntityEnclosingRequestBase) httpRequest;
-                methodPost.setEntity(new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8));
+                httpRequest.setEntity(new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8));
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("Error peforming HTTP request: " + e.getMessage(), e);
             }
