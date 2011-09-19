@@ -29,10 +29,7 @@ import org.apache.http.*;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
@@ -298,31 +295,33 @@ public class DefaultWebBrowser implements WebBrowser {
 
     /**
      * Return {@link HttpRequestBase} from WebRequest which is
-     * shell on http GET request
+     * shell on http GET or DELETE request
      *
      * @param webRequest shell under http GET request
+     * @param httpRequest HttpRequestBase instance
      * @return HttpMethodBase for specified shell on http GET request
      */
-    private HttpRequestBase createGetMethod(WebRequest webRequest) {
-        HttpGet getMethod = new HttpGet(webRequest.getUrl());
-        setDefaultMethodParams(getMethod);
-        setHeaders(getMethod, webRequest.getHeaders());
+    private HttpRequestBase populateHttpRequestBaseMethod(WebRequest webRequest, HttpRequestBase httpRequest) {
+        setDefaultMethodParams(httpRequest);
+        setHeaders(httpRequest, webRequest.getHeaders());
 
-        return getMethod;
+        return httpRequest;
     }
 
     /**
      * Return {@link HttpRequestBase} from WebRequest which is
-     * shell on http POST request
+     * shell on http POST or PUT request
      *
      * @param webRequest shell under http POST request
+     * @param httpRequest HttpEntityEnclosingRequestBase instance
      * @return HttpMethodBase for specified shell on http POST request
      */
-    private HttpRequestBase createPostMethod(WebRequest webRequest) {
-        HttpRequestBase postMethod = new HttpPost(webRequest.getUrl());
-        setDefaultMethodParams(postMethod);
-        setHeaders(postMethod, webRequest.getHeaders());
-        postMethod.addHeader(HttpConstants.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
+    private HttpRequestBase populateHttpEntityEnclosingRequestBaseMethod(WebRequest webRequest,
+                                                                   HttpEntityEnclosingRequestBase httpRequest) {
+
+        setDefaultMethodParams(httpRequest);
+        setHeaders(httpRequest, webRequest.getHeaders());
+        httpRequest.addHeader(HttpConstants.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
 
         // data - name/value params
         List<NameValuePair> nameValuePairList = null;
@@ -336,14 +335,14 @@ public class DefaultWebBrowser implements WebBrowser {
 
         if (nameValuePairList != null) {
             try {
-                HttpPost methodPost = (HttpPost) postMethod;
+                HttpEntityEnclosingRequestBase methodPost = (HttpEntityEnclosingRequestBase) httpRequest;
                 methodPost.setEntity(new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8));
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException("Error peforming HTTP request: " + e.getMessage(), e);
             }
         }
 
-        return postMethod;
+        return httpRequest;
     }
 
     /**
@@ -380,10 +379,16 @@ public class DefaultWebBrowser implements WebBrowser {
 
         switch (webRequest.getRequestMethod()) {
             case GET:
-                httpRequest.set(createGetMethod(webRequest));
+                httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpGet(webRequest.getUrl())));
+                break;
+            case DELETE:
+                httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpDelete(webRequest.getUrl())));
                 break;
             case POST:
-                httpRequest.set(createPostMethod(webRequest));
+                httpRequest.set(populateHttpEntityEnclosingRequestBaseMethod(webRequest, new HttpPost(webRequest.getUrl())));
+                break;
+            case PUT:
+                httpRequest.set(populateHttpEntityEnclosingRequestBaseMethod(webRequest, new HttpPut(webRequest.getUrl())));
                 break;
         }
 

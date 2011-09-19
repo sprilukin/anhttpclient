@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Sergey Pilukin
  * @version $Id$
  */
-public final class HttpPostWebRequest extends HttpGetWebRequest {
+public class HttpPostWebRequest extends HttpGetWebRequest {
     protected Map<String, String> params = new HashMap<String, String>();
 
     public HttpPostWebRequest() {
