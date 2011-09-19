@@ -75,7 +75,8 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
             System.out.println("=== SIMPLE-HTTP-SERVER REQUEST METHOD: " + httpExchange.getRequestMethod());
 
             //Writing request body
-            try {
+            //Skip because inputstream can be read here only once
+            /*try {
                 String request = new String(IOUtils.toByteArray(httpExchange.getRequestBody()));
                 if (!"".equals(request.trim())) {
                     System.out.println("=== SIMPLE-HTTP-SERVER REQUEST BODY: \r\n" + request);
@@ -84,7 +85,7 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
         }
 
         public void handle(HttpExchange httpExchange) throws IOException {

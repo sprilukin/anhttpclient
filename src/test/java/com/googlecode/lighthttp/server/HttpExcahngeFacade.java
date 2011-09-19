@@ -24,9 +24,9 @@ package com.googlecode.lighthttp.server;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 
 /**
@@ -55,8 +55,8 @@ public final class HttpExcahngeFacade {
         return httpExchange.getRequestMethod();
     }
 
-    public InputStream getRequestBody() throws IOException {
-        return httpExchange.getRequestBody();
+    public byte[] getRequestBody() throws IOException {
+        return IOUtils.toByteArray(httpExchange.getRequestBody());
     }
 
     public URI getRequestURI() {

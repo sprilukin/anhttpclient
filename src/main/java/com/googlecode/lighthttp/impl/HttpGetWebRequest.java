@@ -28,6 +28,7 @@ import com.googlecode.lighthttp.WebRequest;
 import com.googlecode.lighthttp.WebResponse;
 
 import java.net.MalformedURLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,7 +127,7 @@ public class HttpGetWebRequest implements WebRequest {
         String[] urlWithParamsArray = url.split(ESCAPED_QUERY_SIGN);
 
         if (urlWithParamsArray.length < 2) {
-            return null;
+            return Collections.emptyMap();
         }
 
         String paramsString = url.split(ESCAPED_QUERY_SIGN)[1];

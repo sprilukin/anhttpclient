@@ -32,12 +32,12 @@ import com.googlecode.lighthttp.server.DefaultSimpleHttpServer;
 import com.googlecode.lighthttp.server.HttpExcahngeFacade;
 import com.googlecode.lighthttp.server.SimpleHttpServer;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -58,17 +58,46 @@ public class LighthttpTest {
         defaultHeaders.load(headersAsStream);
 
         wb.setDefaultHeaders(defaultHeaders);
+        wb.setSocketTimeout(500);
     }
 
-    @Ignore
-    public void testEmailInForm() throws Exception {
-        WebRequest req = new HttpPostWebRequest("http://google.com");
-        req.addParam("email", "sss@ggg.com");
-        req.addParam("space", "aaa bbb");
-        req.addParam("russian", "привет");
-        req.addParam("some_chars", "!@#$%^&*()_+|");
+    @Test
+    public void testPostRequest() throws Exception {
+        final Map<String, String> params = new HashMap<String, String>();
+        params.put("email", "sss@ggg.com");
+        params.put("space", "aaa bbb");
+        params.put("russian", "привет");
+        params.put("some_chars", "!@#$%^&*()_+|");
 
-        WebResponse resp = wb.getResponse(req);
+
+        SimpleHttpServer server = new DefaultSimpleHttpServer();
+        server.addHandler("/post", new BaseSimpleHttpHandler() {
+            @Override
+            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+                assertEquals("Method should be POST", "POST", httpExcahngeFacade.getRequestMethod());
+
+                try {
+                    String postParams = new String(httpExcahngeFacade.getRequestBody());
+                    String[] paramValuePairs = postParams.split("\\&");
+                    for (String paramValuePair: paramValuePairs) {
+                        String[] paramValueArray = paramValuePair.split("\\=");
+                        String param = paramValueArray[0];
+                        String value = java.net.URLDecoder.decode(paramValueArray[1], "UTF-8");
+                        assertEquals(String.format("incorrect param value: %s   should be: %s", value, params.get(param)), value, params.get(param));
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                return null;
+            }
+        }).start();
+
+        WebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/post");
+        req.addParams(params);
+
+        wb.getResponse(req);
+        server.stop();
     }
 
     @Test
@@ -77,7 +106,7 @@ public class LighthttpTest {
         final String responseText = "Hello from SimpleHttperver";
 
         SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/index/path", new BaseSimpleHttpHandler() {
+        server.addHandler("/get", new BaseSimpleHttpHandler() {
             @Override
             protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
                 assertEquals("Method should be GET", "GET", httpExcahngeFacade.getRequestMethod());
@@ -85,7 +114,7 @@ public class LighthttpTest {
             }
         }).start();
 
-        WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/index/path?param1=value1");
+        WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/get?param1=value1");
         WebResponse resp = wb.getResponse(req);
         server.stop();
         assertEquals("Response from server is incorrect", responseText, resp.getText());
