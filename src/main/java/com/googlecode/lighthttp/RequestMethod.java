@@ -23,12 +23,15 @@
 package com.googlecode.lighthttp;
 
 /**
- * Represents types of HTTP request
+ * Represents types of HTTP request. <br />
+ * See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">www.w3.org<a/>
  *
  * @author Sergey Pilukin
- * @since 25.04.2008 14:29:31
+ * @version $Id$
  */
 public enum RequestMethod {
     GET,
-    POST
+    POST,
+    PUT,
+    DELETE
 }

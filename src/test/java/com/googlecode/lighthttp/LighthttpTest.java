@@ -41,7 +41,7 @@ import java.util.Properties;
  * Tests http client
  *
  * @author Sergey Prilukin
- * @since 29.05.2008 10:02:10
+ * @version $Id$
  */
 public class LighthttpTest {
 

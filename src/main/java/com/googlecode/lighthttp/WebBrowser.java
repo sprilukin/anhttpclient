@@ -31,7 +31,7 @@ import java.util.Map;
  * with minimum necessary methods
  *
  * @author Sergey Prilukin
- * @since 08.04.2008 17:20:21
+ * @version $Id$
  */
 public interface WebBrowser {
 

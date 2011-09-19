@@ -26,7 +26,7 @@ package com.googlecode.lighthttp;
  * Used as simple wrapper under HTTP Cookie
  *
  * @author Sergey Pilukin
- * @since 10.05.2008 1:01:05
+ * @version $Id$
  */
 public interface Cookie {
     /**

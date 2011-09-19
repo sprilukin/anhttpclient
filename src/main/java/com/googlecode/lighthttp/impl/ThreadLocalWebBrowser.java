@@ -37,7 +37,7 @@ import java.util.Map;
  * (sometimes it won't works correctly)
  *
  * @author Sergey Pilukin
- * @since 11.05.2008 1:13:46
+ * @version $Id$
  */
 public final class ThreadLocalWebBrowser implements WebBrowser {
 

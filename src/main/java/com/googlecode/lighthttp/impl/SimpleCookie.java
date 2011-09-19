@@ -28,7 +28,7 @@ import com.googlecode.lighthttp.Cookie;
  * Simple implementation of {@link Cookie}
  *
  * @author Sergey Pilukin
- * @since 10.05.2008 1:03:26
+ * @version $Id$
  */
 public final class SimpleCookie implements Cookie {
     protected String domain;

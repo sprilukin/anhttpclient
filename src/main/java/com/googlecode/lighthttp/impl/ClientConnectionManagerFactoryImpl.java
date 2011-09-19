@@ -33,7 +33,7 @@ import org.apache.http.params.HttpParams;
  * Basic {@link ClientConnectionManagerFactory} implementation
  *
  * @author Sergey Prilukin
- *         Date: 16.09.11 17:54
+ * @version $Id$
  */
 public final class ClientConnectionManagerFactoryImpl implements ClientConnectionManagerFactory {
     public static final String THREAD_SAFE_CONNECTION_MANAGER = "thread.safe.connection.manager";

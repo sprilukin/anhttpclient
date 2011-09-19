@@ -65,7 +65,7 @@ import java.util.zip.GZIPInputStream;
  * - socket timeout     : time in milliseconds which determine socket timeout of HTTP request
  *
  * @author Sergey Prilukin
- * @since 08.04.2008 16:43:34
+ * @version $Id$
  */
 public class DefaultWebBrowser implements WebBrowser {
     public static final Log log = LogFactory.getLog(DefaultWebBrowser.class);

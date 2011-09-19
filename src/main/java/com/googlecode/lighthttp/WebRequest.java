@@ -29,7 +29,7 @@ import java.util.Map;
  * Used as easy wrapper under http request
  *
  * @author Sergey Prilukin
- * @since 08.04.2008 18:15:56
+ * @version $Id$
  */
 public interface WebRequest {
     /**

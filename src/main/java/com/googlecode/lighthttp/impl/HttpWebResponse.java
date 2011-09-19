@@ -42,7 +42,7 @@ import java.util.Map;
  * Wrapper over http response
  *
  * @author Sergey Prilukin
- * @since 08.04.2008 17:19:31
+ * @version $Id$
  */
 public final class HttpWebResponse implements WebResponse {
     protected Map<String, String> responseHeaders = new HashMap<String, String>();

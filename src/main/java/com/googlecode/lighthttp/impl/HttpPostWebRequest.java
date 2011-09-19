@@ -32,7 +32,7 @@ import java.util.Map;
  * Wrapper over HTTP POST request
  *
  * @author Sergey Pilukin
- * @since 25.04.2008 14:35:45
+ * @version $Id$
  */
 public final class HttpPostWebRequest extends HttpGetWebRequest {
     protected Map<String, String> params = new HashMap<String, String>();

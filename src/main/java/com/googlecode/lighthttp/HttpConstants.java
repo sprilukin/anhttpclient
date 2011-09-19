@@ -27,7 +27,7 @@ package com.googlecode.lighthttp;
  * during dealing with httpclient
  *
  * @author Sergey Pilukin
- * @since 13.11.2008 21:55:55
+ * @version $Id$
  */
 public class HttpConstants {
     public static final String GZIP = "gzip";
