@@ -416,6 +416,8 @@ public class DefaultWebBrowser implements WebBrowser {
             case PUT:
                 httpRequest.set(populateHttpEntityEnclosingRequestBaseMethod(webRequest, new HttpPut(webRequest.getUrl())));
                 break;
+            default:
+                throw new RuntimeException("Method not yet supported: " + webRequest.getRequestMethod());
         }
 
         WebResponse resp;
