@@ -20,34 +20,41 @@
  * SOFTWARE.
  */
 
-package com.googlecode.lighthttp;
+package com.googlecode.lighthttp.impl;
 
 /**
- * Constants for usage in implementations of {@link WebBrowser}
+ * Constants for usage in implementations of {@link com.googlecode.lighthttp.WebBrowser}
  *
- * @author Sergey Pilukin
+ * @author Sergey Prilukin
  * @version $Id$
  */
-public final class HttpConstants {
+public final class WebBrowserConstants {
 
     /**
-     * HTTP header which indicates that gzip encoding was used HTTP in response
+     * Default user-agent.
+     * May be replaced with {@code User-Agent} request header
      */
-    public static final String GZIP = "gzip";
+    public static final String DEFAULT_USER_AGENT = "lighthttp/0.1";
 
     /**
-     * HTTP header which indicates type of content of HTTP response
+     * Default count if retrying unsuccessful HTTP request
      */
-    public static final String CONTENT_TYPE = "Content-Type";
+    public static final int DEFAULT_RETRY_COUNT = 3;
 
     /**
-     * HTTP header which indicates referer URL
+     * Default request socket timeout
      */
-    public static final String REFERER_HEADER = "Referer";
+    public static final int DEFAULT_SOCKET_TIMEOUT = 60000;
 
     /**
-     * HTTP Request body parameter which indicates type of data in request body
+     * Default connection timeout
      */
-    public static final String MIME_FORM_ENCODED = "application/x-www-form-urlencoded";
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
 
+    /**
+     * Default class name of implementation of
+     * {@link org.apache.http.conn.ClientConnectionManagerFactory}
+     */
+    public static final String DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME =
+            "com.googlecode.lighthttp.impl.ClientConnectionManagerFactoryImpl";
 }

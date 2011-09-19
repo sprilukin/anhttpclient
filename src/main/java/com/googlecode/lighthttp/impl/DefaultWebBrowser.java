@@ -70,23 +70,16 @@ import java.util.zip.GZIPInputStream;
 public class DefaultWebBrowser implements WebBrowser {
     public static final Log log = LogFactory.getLog(DefaultWebBrowser.class);
 
-    public static final String DEFAULT_USER_AGENT = "lighthttp/0.1";
-    public static final int DEFAULT_RETRY_COUNT = 3;
-    public static final int DEFAULT_SOCKET_TIMEOUT = 60000;
-    public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
-    public static final String DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME =
-            "com.googlecode.lighthttp.impl.ClientConnectionManagerFactoryImpl";
-
     protected HttpClient httpClient;
     protected CookieStore cookieStore = new BasicCookieStore();
     protected Map<String, String> defaultHeaders = new HashMap<String, String>();
-    protected int retryCount = DEFAULT_RETRY_COUNT;
-    protected int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-    protected int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    protected int retryCount = WebBrowserConstants.DEFAULT_RETRY_COUNT;
+    protected int socketTimeout = WebBrowserConstants.DEFAULT_SOCKET_TIMEOUT;
+    protected int connectionTimeout = WebBrowserConstants.DEFAULT_CONNECTION_TIMEOUT;
     protected ThreadLocal<HttpRequestBase> httpRequest = new ThreadLocal<HttpRequestBase>();
 
     private HttpParams httpParams;
-    private String clientConnectionFactoryClassName = DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME;
+    private String clientConnectionFactoryClassName = WebBrowserConstants.DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME;
     private boolean threadSafe = false;
     private boolean initialized = false;
 
@@ -144,7 +137,7 @@ public class DefaultWebBrowser implements WebBrowser {
         HttpParams params = new BasicHttpParams();
         params.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpVersion.HTTP_1_1);
         params.setParameter(CoreProtocolPNames.HTTP_CONTENT_CHARSET, HTTP.UTF_8);
-        params.setParameter(CoreProtocolPNames.USER_AGENT, DEFAULT_USER_AGENT);
+        params.setParameter(CoreProtocolPNames.USER_AGENT, WebBrowserConstants.DEFAULT_USER_AGENT);
         params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
         params.setParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false);
         params.setParameter(ClientPNames.CONNECTION_MANAGER_FACTORY_CLASS_NAME, clientConnectionFactoryClassName);

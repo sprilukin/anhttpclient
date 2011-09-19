@@ -43,9 +43,9 @@ public final class MultiThreadWebBrowser implements WebBrowser {
     private Map<String, WebBrowser> webBrowsersList = new HashMap<String, WebBrowser>(); 
 
     protected final Map<String, String> defaultHeaders = new HashMap<String, String>();
-    protected int retryCount = 3;
-    protected int socketTimeout = 60000;
-    protected int connectionTimeout = 30000;
+    protected int retryCount = WebBrowserConstants.DEFAULT_RETRY_COUNT;
+    protected int socketTimeout = WebBrowserConstants.DEFAULT_SOCKET_TIMEOUT;
+    protected int connectionTimeout = WebBrowserConstants.DEFAULT_CONNECTION_TIMEOUT;
 
     private final Object setRetryCountMonitor = new Object();
     private final Object setSocketTimeoutMonitor = new Object();

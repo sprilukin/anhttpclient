@@ -36,8 +36,16 @@ import org.apache.http.params.HttpParams;
  * @version $Id$
  */
 public final class ClientConnectionManagerFactoryImpl implements ClientConnectionManagerFactory {
+
+    /**
+     * Name of the property in {@link org.apache.http.params.HttpParams}
+     * Which will be used to determine whether thread-safe connection manager should be used
+     */
     public static final String THREAD_SAFE_CONNECTION_MANAGER = "thread.safe.connection.manager";
 
+    /**
+     * {@inheritDoc}
+     */
     public ClientConnectionManager newInstance(HttpParams params, SchemeRegistry schemeRegistry) {
         if (params != null) {
             boolean threadSafe = params.getBooleanParameter(THREAD_SAFE_CONNECTION_MANAGER, false);
