@@ -22,14 +22,32 @@
 
 package com.googlecode.lighthttp.impl;
 
-import com.googlecode.lighthttp.*;
+import com.googlecode.lighthttp.Cookie;
+import com.googlecode.lighthttp.HttpConstants;
+import com.googlecode.lighthttp.WebBrowser;
+import com.googlecode.lighthttp.WebRequest;
+import com.googlecode.lighthttp.WebResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
+import org.apache.http.HttpVersion;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
@@ -42,7 +60,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.*;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -50,7 +71,11 @@ import org.apache.http.protocol.HttpContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -236,7 +261,7 @@ public class DefaultWebBrowser implements WebBrowser {
         if (AbstractHttpClient.class.isAssignableFrom(httpClient.getClass())) {
             ((AbstractHttpClient)httpClient).setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(retryCount, true));
         }
-        HttpConnectionParams.setSoTimeout(httpClient.getParams(), socketTimeout);
+        httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, socketTimeout);
     }
 
     /**
@@ -316,12 +341,13 @@ public class DefaultWebBrowser implements WebBrowser {
      * @param httpRequest HttpEntityEnclosingRequestBase instance
      * @return HttpMethodBase for specified shell on http POST request
      */
-    private HttpRequestBase populateHttpEntityEnclosingRequestBaseMethod(WebRequest webRequest,
-                                                                   HttpEntityEnclosingRequestBase httpRequest) {
+    private HttpRequestBase populateHttpEntityEnclosingRequestBaseMethod(
+            WebRequest webRequest,
+            HttpEntityEnclosingRequestBase httpRequest) {
 
         setDefaultMethodParams(httpRequest);
         setHeaders(httpRequest, webRequest.getHeaders());
-        httpRequest.addHeader(HttpConstants.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
+        httpRequest.addHeader(HTTP.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
 
         // data - name/value params
         List<NameValuePair> nameValuePairList = null;

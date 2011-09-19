@@ -36,11 +36,6 @@ public final class HttpConstants {
     public static final String GZIP = "gzip";
 
     /**
-     * HTTP header which indicates type of content of HTTP response
-     */
-    public static final String CONTENT_TYPE = "Content-Type";
-
-    /**
      * HTTP header which indicates referer URL
      */
     public static final String REFERER_HEADER = "Referer";
