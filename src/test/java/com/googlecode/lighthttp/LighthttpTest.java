@@ -23,6 +23,7 @@
 package com.googlecode.lighthttp;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.googlecode.lighthttp.impl.DefaultWebBrowser;
 import com.googlecode.lighthttp.impl.HttpDeleteWebRequest;
@@ -65,7 +66,7 @@ public class LighthttpTest {
         defaultHeaders.load(headersAsStream);
 
         wb.setDefaultHeaders(defaultHeaders);
-        wb.setSocketTimeout(100);
+        wb.setSocketTimeout(100000);
     }
 
     @Test
@@ -93,18 +94,18 @@ public class LighthttpTest {
                         String[] paramValueArray = paramValuePair.split("\\=");
                         String param = paramValueArray[0];
                         String value = java.net.URLDecoder.decode(paramValueArray[1], "UTF-8");
-                        assertEquals(String.format("incorrect param value", value, params.get(param)), value, params.get(param));
+                        assertEquals("incorrect param value", value, params.get(param));
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                return null;
+                return "OK".getBytes();
             }
         }).start();
 
-        WebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/post");
-        req.addParams(params);
+        EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/post");
+        req.addFormParams(params);
 
         wb.getResponse(req);
         server.stop();
@@ -222,8 +223,55 @@ public class LighthttpTest {
             }
         }).start();
 
-        WebRequest req = new HttpPutWebRequest(server.getBaseUrl() + "/put");
-        req.addParams(params);
+        EntityEnclosingWebRequest req = new HttpPutWebRequest(server.getBaseUrl() + "/put");
+        req.addFormParams(params);
+
+        wb.getResponse(req);
+        server.stop();
+    }
+
+    @Test
+    public void testPostWithBodyRequest() throws Exception {
+        final String requestParam1 = "Test request body";
+        final String requestParam2 = "Test request body string";
+        final byte[] body = requestParam1.getBytes();
+
+        final String requestBody = "--zeNfQFxOvIRY_1tTWU-9ArUdJpMkKi9\n" +
+                "Content-Disposition: form-data; name=\"param1\"\n" +
+                "Content-Type: application/octet-stream\n" +
+                "Content-Transfer-Encoding: binary\n" +
+                "\n" +
+                "Test request body\n" +
+                "--zeNfQFxOvIRY_1tTWU-9ArUdJpMkKi9\n" +
+                "Content-Disposition: form-data; name=\"param2\"\n" +
+                "Content-Type: text/plain; charset=US-ASCII\n" +
+                "Content-Transfer-Encoding: 8bit\n" +
+                "\n" +
+                "Test request body string\n" +
+                "--zeNfQFxOvIRY_1tTWU-9ArUdJpMkKi9--";
+
+        SimpleHttpServer server = new DefaultSimpleHttpServer();
+        server.addHandler("/postWithBody", new BaseSimpleHttpHandler() {
+            @Override
+            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+                try {
+                    byte[] body = httpExcahngeFacade.getRequestBody();
+                    //assertEquals(requestBody, new String(body));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                assertEquals("Method should be POST", "POST", httpExcahngeFacade.getRequestMethod());
+                assertTrue(httpExcahngeFacade.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0)
+                        .contains("multipart/form-data"));
+
+                return null;
+            }
+        }).start();
+
+        EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/postWithBody");
+        req.addPart("param1", body, null, null);
+        req.addPart("param2", requestParam2, null);
 
         wb.getResponse(req);
         server.stop();

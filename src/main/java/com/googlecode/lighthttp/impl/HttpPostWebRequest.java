@@ -22,9 +22,23 @@
 
 package com.googlecode.lighthttp.impl;
 
+import com.googlecode.lighthttp.EntityEnclosingWebRequest;
 import com.googlecode.lighthttp.RequestMethod;
-import com.googlecode.lighthttp.WebRequest;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.ContentBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.InputStreamBody;
+import org.apache.http.entity.mime.content.StringBody;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,8 +48,16 @@ import java.util.Map;
  * @author Sergey Pilukin
  * @version $Id$
  */
-public class HttpPostWebRequest extends HttpGetWebRequest {
-    protected Map<String, String> params = new HashMap<String, String>();
+public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclosingWebRequest {
+    public static String OCTET_STREAM_MIME_TYPE = "application/octet-stream";
+    public static String TEXT_PLAIN_MIME_TYPE = "text/plain";
+
+    protected Map<String, String> formParams = new HashMap<String, String>();
+    Map<String, ContentBody> parts = new HashMap<String, ContentBody>();
+
+    private String getMimeTypeOrDefault(String mimeType) {
+        return mimeType != null ? mimeType : OCTET_STREAM_MIME_TYPE;
+    }
 
     public HttpPostWebRequest() {
         /* Default constructor */
@@ -53,24 +75,84 @@ public class HttpPostWebRequest extends HttpGetWebRequest {
     /**
      * {@inheritDoc}
      */
-    public Map<String, String> getRequestParams() {
-        Map<String, String> allParams = new HashMap<String, String>(super.getRequestParams());
-        allParams.putAll(params);
-        return allParams;
+    public Map<String, String> getFormParams() {
+        return Collections.unmodifiableMap(formParams);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addParams(Map<String, String> requestParams) {
-        params.putAll(requestParams);
+    public void addFormParams(Map<String, String> requestParams) {
+        parts.clear();
+        formParams.putAll(requestParams);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addParam(String name, String value) {
-        params.put(name, value);
+    public void addFormParam(String name, String value) {
+        parts.clear();
+        formParams.put(name, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, File file, String mimeType, String charset, String name) throws IOException {
+        parts.put(partName, new FileBody(file, name, getMimeTypeOrDefault(mimeType), charset));
+        formParams.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, InputStream inputStream, String name, String mimeType) throws IOException {
+        parts.put(partName, new InputStreamBody(inputStream, getMimeTypeOrDefault(mimeType), name));
+        formParams.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, String string, String charset) {
+        parts.put(partName, StringBody.create(string, TEXT_PLAIN_MIME_TYPE, charset != null ? Charset.forName(charset) : null));
+        formParams.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, byte[] byteArray, String mimeType, String name) {
+        parts.put(partName, new ByteArrayBody(byteArray, getMimeTypeOrDefault(mimeType), name));
+        formParams.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, Serializable serializable, String mimeType, String name) throws IOException {
+        ByteArrayOutputStream bos = null;
+        ObjectOutput out = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            out = new ObjectOutputStream(bos);
+            out.writeObject(serializable);
+            byte[] part = bos.toByteArray();
+
+            addPart(partName, part, mimeType, name);
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+
+            if (bos != null) {
+                bos.close();
+            }
+        }
+    }
+
+    public Map<String, ContentBody> getParts() {
+        return Collections.unmodifiableMap(parts);
     }
 
     /**

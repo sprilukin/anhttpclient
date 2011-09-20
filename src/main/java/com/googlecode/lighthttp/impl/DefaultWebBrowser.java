@@ -23,6 +23,7 @@
 package com.googlecode.lighthttp.impl;
 
 import com.googlecode.lighthttp.Cookie;
+import com.googlecode.lighthttp.EntityEnclosingWebRequest;
 import com.googlecode.lighthttp.HttpConstants;
 import com.googlecode.lighthttp.WebBrowser;
 import com.googlecode.lighthttp.WebRequest;
@@ -54,6 +55,8 @@ import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.params.CookieSpecPNames;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -343,26 +346,41 @@ public class DefaultWebBrowser implements WebBrowser {
             WebRequest webRequest,
             HttpEntityEnclosingRequestBase httpRequest) {
 
+        EntityEnclosingWebRequest webRequestWithBody = (EntityEnclosingWebRequest)webRequest;
         setDefaultMethodParams(httpRequest);
-        setHeaders(httpRequest, webRequest.getHeaders());
-        httpRequest.addHeader(HTTP.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
+        setHeaders(httpRequest, webRequestWithBody.getHeaders());
 
-        // data - name/value params
-        List<NameValuePair> nameValuePairList = null;
-        Map<String, String> requestParams = webRequest.getRequestParams();
-        if ((requestParams != null) && (requestParams.size() > 0)) {
-            nameValuePairList = new ArrayList<NameValuePair>();
-            for (Map.Entry<String, String> entry : requestParams.entrySet()) {
-                nameValuePairList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+        HttpEntity entity = null;
+
+        if (webRequestWithBody.getParts().size() == 0) {
+            httpRequest.addHeader(HTTP.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
+
+            // data - name/value params
+            List<NameValuePair> nameValuePairList = null;
+            Map<String, String> requestParams = webRequestWithBody.getFormParams();
+            if ((requestParams != null) && (requestParams.size() > 0)) {
+                nameValuePairList = new ArrayList<NameValuePair>();
+                for (Map.Entry<String, String> entry : requestParams.entrySet()) {
+                    nameValuePairList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                }
+            }
+
+            if (nameValuePairList != null) {
+                try {
+                    entity = new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8);
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        } else {
+            entity = new MultipartEntity();
+            for (Map.Entry<String, ContentBody> entry: webRequestWithBody.getParts().entrySet()) {
+                ((MultipartEntity)entity).addPart(entry.getKey(), entry.getValue());
             }
         }
 
-        if (nameValuePairList != null) {
-            try {
-                httpRequest.setEntity(new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Error peforming HTTP request: " + e.getMessage(), e);
-            }
+        if (entity != null) {
+            httpRequest.setEntity(entity);
         }
 
         return httpRequest;
