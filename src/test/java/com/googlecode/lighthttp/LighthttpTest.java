@@ -93,7 +93,7 @@ public class LighthttpTest {
                         String[] paramValueArray = paramValuePair.split("\\=");
                         String param = paramValueArray[0];
                         String value = java.net.URLDecoder.decode(paramValueArray[1], "UTF-8");
-                        assertEquals(String.format("incorrect param value: %s   should be: %s", value, params.get(param)), value, params.get(param));
+                        assertEquals(String.format("incorrect param value", value, params.get(param)), value, params.get(param));
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -125,7 +125,7 @@ public class LighthttpTest {
                 assertEquals(httpExcahngeFacade.getRequestHeaders().get("Host").get(0), DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
                 for (Map.Entry<String, List<String>> entry: httpExcahngeFacade.getRequestHeaders().entrySet()) {
                     if (!"Host".equals(entry.getKey())) {
-                        assertEquals(String.format("sent header [%s] not equals to received", entry.getKey()),
+                        assertEquals(String.format("sent header [%s] not equals to received one", entry.getKey()),
                                 defaultHeaders.get(entry.getKey()), entry.getValue().get(0));
                     }
                 }
@@ -212,7 +212,7 @@ public class LighthttpTest {
                         String[] paramValueArray = paramValuePair.split("\\=");
                         String param = paramValueArray[0];
                         String value = java.net.URLDecoder.decode(paramValueArray[1], "UTF-8");
-                        assertEquals(String.format("incorrect param value: %s   should be: %s", value, params.get(param)), value, params.get(param));
+                        assertEquals(String.format("incorrect param value"), value, params.get(param));
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
