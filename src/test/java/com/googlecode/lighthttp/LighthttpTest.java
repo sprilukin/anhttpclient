@@ -66,7 +66,7 @@ public class LighthttpTest {
         defaultHeaders.load(headersAsStream);
 
         wb.setDefaultHeaders(defaultHeaders);
-        wb.setSocketTimeout(100000);
+        wb.setSocketTimeout(100);
     }
 
     @Test
