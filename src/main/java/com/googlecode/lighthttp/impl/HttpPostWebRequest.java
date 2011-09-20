@@ -62,19 +62,15 @@ public class HttpPostWebRequest extends HttpGetWebRequest {
     /**
      * {@inheritDoc}
      */
-    public WebRequest addParams(Map<String, String> requestParams) {
+    public void addParams(Map<String, String> requestParams) {
         params.putAll(requestParams);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebRequest addParam(String name, String value) {
+    public void addParam(String name, String value) {
         params.put(name, value);
-
-        return this;
     }
 
     /**

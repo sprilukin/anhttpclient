@@ -232,7 +232,7 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public WebBrowser setDefaultHeaders(final Map defaultHeaders) {
+    public void setDefaultHeaders(final Map defaultHeaders) {
         this.defaultHeaders.clear();
         for (Object entryObject : defaultHeaders.entrySet()) {
             Map.Entry<Object, Object> entry = (Map.Entry<Object, Object>)entryObject;
@@ -240,8 +240,6 @@ public class DefaultWebBrowser implements WebBrowser {
             String headerValue = String.valueOf(entry.getValue());
             this.addHeader(headerName, headerValue);
         }
-
-        return this;
     }
 
     /**
@@ -457,19 +455,15 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public WebBrowser addHeaders(Map<String, String> headers) {
+    public void addHeaders(Map<String, String> headers) {
         defaultHeaders.putAll(headers);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebBrowser addHeader(String name, String value) {
+    public void addHeader(String name, String value) {
         defaultHeaders.put(name, value);
-
-        return this;
     }
 
     /**
@@ -482,10 +476,8 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public WebBrowser setRetryCount(Integer retryCount) {
+    public void setRetryCount(Integer retryCount) {
         this.retryCount = retryCount;
-
-        return this;
     }
 
     /**
@@ -498,10 +490,8 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public WebBrowser setSocketTimeout(Integer socketTimeout) {
+    public void setSocketTimeout(Integer socketTimeout) {
         this.socketTimeout = socketTimeout;
-
-        return this;
     }
 
     /**
@@ -514,12 +504,10 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public WebBrowser setConnectionTimeout(Integer connectionTimeout) {
+    public void setConnectionTimeout(Integer connectionTimeout) {
         initHttpClient();
         this.connectionTimeout = connectionTimeout;
         httpClient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, connectionTimeout);
-
-        return this;
     }
 
     /**
@@ -542,7 +530,7 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public WebBrowser addCookie(Cookie cookie) {
+    public void addCookie(Cookie cookie) {
         BasicClientCookie apacheCookie =
                 new BasicClientCookie(
                         cookie.getName(), cookie.getValue()
@@ -550,14 +538,12 @@ public class DefaultWebBrowser implements WebBrowser {
         apacheCookie.setPath(cookie.getPath());
         apacheCookie.setDomain(cookie.getDomain());
         cookieStore.addCookie(apacheCookie);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebBrowser addCookies(List<Cookie> cookies) {
+    public void addCookies(List<Cookie> cookies) {
         for (Cookie cookie : cookies) {
             BasicClientCookie apacheCookie =
                     new BasicClientCookie(cookie.getName(), cookie.getValue());
@@ -565,48 +551,38 @@ public class DefaultWebBrowser implements WebBrowser {
             apacheCookie.setDomain(cookie.getDomain());
             cookieStore.addCookie(apacheCookie);
         }
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebBrowser clearAllCookies() {
+    public void clearAllCookies() {
         cookieStore.clear();
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebBrowser setProxy(String url, int port) {
+    public void setProxy(String url, int port) {
         initHttpClient();
         HttpHost proxy = new HttpHost(url, port);
         httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebBrowser clearProxy() {
+    public void clearProxy() {
         initHttpClient();
         httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebBrowser abort() {
+    public void abort() {
         if (httpRequest.get() != null && !httpRequest.get().isAborted()) {
             httpRequest.get().abort();
         }
-
-        return this;
     }
 }

@@ -110,27 +110,23 @@ public final class MultiThreadWebBrowser implements WebBrowser {
         return getBrowserForCurrentThread().getHeader(headerName);
     }
 
-    public WebBrowser addHeaders(Map<String, String> headers) {
+    public void addHeaders(Map<String, String> headers) {
         synchronized (defaultHeaders) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.addHeaders(headers);
             }
-
-            return this;
         }
     }
 
-    public WebBrowser addHeader(String name, String value) {
+    public void addHeader(String name, String value) {
         synchronized (defaultHeaders) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.addHeader(name, value);
             }
-
-            return this;
         }
     }
 
-    public WebBrowser setDefaultHeaders(Map defaultHeaders) {
+    public void setDefaultHeaders(Map defaultHeaders) {
         synchronized (this.defaultHeaders) {
             this.defaultHeaders.clear();
             for (Object entryObject : defaultHeaders.entrySet()) {
@@ -143,8 +139,6 @@ public final class MultiThreadWebBrowser implements WebBrowser {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.setDefaultHeaders(defaultHeaders);
             }
-
-            return this;
         }
     }
 
@@ -152,15 +146,13 @@ public final class MultiThreadWebBrowser implements WebBrowser {
         return getBrowserForCurrentThread().getRetryCount();
     }
 
-    public WebBrowser setRetryCount(Integer retryCount) {
+    public void setRetryCount(Integer retryCount) {
         synchronized (setRetryCountMonitor) {
             this.retryCount = retryCount;
 
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.setRetryCount(retryCount);
             }
-
-            return this;
         }
     }
 
@@ -168,15 +160,13 @@ public final class MultiThreadWebBrowser implements WebBrowser {
         return getBrowserForCurrentThread().getSocketTimeout();
     }
 
-    public WebBrowser setSocketTimeout(Integer socketTimeout) {
+    public void setSocketTimeout(Integer socketTimeout) {
         synchronized (setSocketTimeoutMonitor) {
             this.socketTimeout = socketTimeout;
 
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.setSocketTimeout(socketTimeout);
             }
-
-            return this;
         }
     }
 
@@ -184,15 +174,13 @@ public final class MultiThreadWebBrowser implements WebBrowser {
         return getBrowserForCurrentThread().getConnectionTimeout();
     }
 
-    public WebBrowser setConnectionTimeout(Integer connectionTimeout) {
+    public void setConnectionTimeout(Integer connectionTimeout) {
         synchronized (setConnectionTimeoutMonitor) {
             this.connectionTimeout = connectionTimeout;
 
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.setConnectionTimeout(connectionTimeout);
             }
-
-            return this;
         }
     }
 
@@ -202,59 +190,49 @@ public final class MultiThreadWebBrowser implements WebBrowser {
 
     private final Object cookieMonitor = new Object();
 
-    public WebBrowser addCookie(Cookie cookie) {
+    public void addCookie(Cookie cookie) {
         synchronized (cookieMonitor) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.addCookie(cookie);
             }
-
-            return this;
         }
     }
 
-    public WebBrowser addCookies(List<Cookie> cookies) {
+    public void addCookies(List<Cookie> cookies) {
         synchronized (cookieMonitor) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.addCookies(cookies);
             }
-
-            return this;
         }
     }
 
-    public WebBrowser clearAllCookies() {
+    public void clearAllCookies() {
         synchronized (cookieMonitor) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.clearAllCookies();
             }
-
-            return this;
         }
     }
 
     private final Object setProxyMonitor = new Object();
 
-    public WebBrowser setProxy(String url, int port) {
+    public void setProxy(String url, int port) {
         synchronized (setProxyMonitor) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.setProxy(url, port);
             }
-
-            return this;
         }
     }
 
-    public WebBrowser clearProxy() {
+    public void clearProxy() {
         synchronized (setProxyMonitor) {
             for (WebBrowser webBrowser: webBrowsersList.values()) {
                 webBrowser.clearProxy();
             }
-
-            return this;
         }
     }
 
-    public WebBrowser abort() {
+    public void abort() {
         throw new RuntimeException("Not implemented");
     }
 }

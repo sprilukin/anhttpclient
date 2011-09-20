@@ -88,79 +88,67 @@ public final class ThreadLocalWebBrowser implements WebBrowser {
         return webBrowser.get().getHeader(headerName);
     }
 
-    public WebBrowser addHeaders(Map<String, String> headers) {
+    public void addHeaders(Map<String, String> headers) {
         webBrowser.get().addHeaders(headers);
-        return this;
     }
 
-    public WebBrowser addHeader(String name, String value) {
+    public void addHeader(String name, String value) {
         webBrowser.get().addHeader(name, value);
-        return this;
     }
 
-    public WebBrowser setDefaultHeaders(Map defaultHeaders) {
+    public void setDefaultHeaders(Map defaultHeaders) {
         webBrowser.get().setDefaultHeaders(defaultHeaders);
-        return this;
     }
 
     public Integer getRetryCount() {
         return webBrowser.get().getRetryCount();
     }
 
-    public WebBrowser setRetryCount(Integer retryCount) {
+    public void setRetryCount(Integer retryCount) {
         webBrowser.get().setRetryCount(retryCount);
-        return this;
     }
 
     public Integer getSocketTimeout() {
         return webBrowser.get().getSocketTimeout();
     }
 
-    public WebBrowser setSocketTimeout(Integer socketTimeout) {
+    public void setSocketTimeout(Integer socketTimeout) {
         webBrowser.get().setSocketTimeout(socketTimeout);
-        return this;
     }
 
     public Integer getConnectionTimeout() {
         return webBrowser.get().getConnectionTimeout();
     }
 
-    public WebBrowser setConnectionTimeout(Integer connectionTimeout) {
+    public void setConnectionTimeout(Integer connectionTimeout) {
         webBrowser.get().setConnectionTimeout(connectionTimeout);
-        return this;
     }
 
     public List<Cookie> getCookies() {
         return webBrowser.get().getCookies();
     }
 
-    public WebBrowser addCookie(Cookie cookie) {
+    public void addCookie(Cookie cookie) {
         webBrowser.get().addCookie(cookie);
-        return this;
     }
 
-    public WebBrowser addCookies(List<Cookie> cookies) {
+    public void addCookies(List<Cookie> cookies) {
         webBrowser.get().addCookies(cookies);
-        return this;
     }
 
-    public WebBrowser clearAllCookies() {
+    public void clearAllCookies() {
         webBrowser.get().clearAllCookies();
-        return this;
     }
 
-    public WebBrowser setProxy(String url, int port) {
+    public void setProxy(String url, int port) {
         webBrowser.get().setProxy(url, port);
-        return this;
     }
 
-    public WebBrowser clearProxy() {
+    public void clearProxy() {
         webBrowser.get().clearProxy();
-        return this;
     }
 
-    public WebBrowser abort() {
+    public void abort() {
         webBrowser.get().abort();
-        return this;
     }
 }

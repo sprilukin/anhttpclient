@@ -67,28 +67,22 @@ public class HttpGetWebRequest implements WebRequest {
         return url;
     }
 
-    public WebRequest setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebRequest addHeaders(Map<String, String> headers) {
+    public void addHeaders(Map<String, String> headers) {
         this.headers.putAll(headers);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebRequest addHeader(String name, String value) {
+    public void addHeader(String name, String value) {
         headers.put(name, value);
-
-        return this;
     }
 
     /**
@@ -101,19 +95,15 @@ public class HttpGetWebRequest implements WebRequest {
     /**
      * {@inheritDoc}
      */
-    public WebRequest setReferer(String referer) {
+    public void setReferer(String referer) {
         headers.put(HttpConstants.REFERER_HEADER, referer);
-
-        return this;
     }
 
     /**
      * {@inheritDoc}
      */
-    public WebRequest setReferer(WebResponse response)  throws MalformedURLException {
+    public void setReferer(WebResponse response)  throws MalformedURLException {
         headers.put(HttpConstants.REFERER_HEADER, response.getUrl().toString());
-
-        return this;
     }
 
     /**
@@ -150,7 +140,7 @@ public class HttpGetWebRequest implements WebRequest {
      *
      * @param requestParams collection of (name, value) pairs of request params
      */
-    public WebRequest addParams(Map<String, String> requestParams) {
+    public void addParams(Map<String, String> requestParams) {
         StringBuilder urlWithParams = new StringBuilder();
         urlWithParams.append(url);
 
@@ -169,8 +159,6 @@ public class HttpGetWebRequest implements WebRequest {
         }
 
         url = urlWithParams.toString();
-
-        return this;
     }
 
     /**
@@ -181,13 +169,11 @@ public class HttpGetWebRequest implements WebRequest {
      * @param name  name of request parameter
      * @param value value of request parameter
      */
-    public WebRequest addParam(String name, String value) {
+    public void addParam(String name, String value) {
         Map<String, String> singleParam = new HashMap<String, String>(1);
 
         singleParam.put(name, value);
         addParams(singleParam);
-
-        return this;
     }
 
     /**

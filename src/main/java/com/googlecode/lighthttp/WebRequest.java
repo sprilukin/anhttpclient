@@ -39,7 +39,7 @@ public interface WebRequest {
      */
     public String getUrl();
 
-    public WebRequest setUrl(String url);
+    public void setUrl(String url);
 
     /**
      * Add http headers which will be sent with this and only
@@ -50,7 +50,7 @@ public interface WebRequest {
      *
      * @param headers headers to add
      */
-    public WebRequest addHeaders(Map<String, String> headers);
+    public void addHeaders(Map<String, String> headers);
 
     /**
      * Add http header which will be sent with this and only
@@ -62,7 +62,7 @@ public interface WebRequest {
      * @param name  name of the request header
      * @param value value of the request header
      */
-    public WebRequest addHeader(String name, String value);
+    public void addHeader(String name, String value);
 
     /**
      * Return collection of all headers which will be added to
@@ -76,7 +76,7 @@ public interface WebRequest {
      * Set "Referer" header to request
      * @param referer value of referer header
      */
-    public WebRequest setReferer(String referer);
+    public void setReferer(String referer);
 
     /**
      * Set "Referer" header to request as url of
@@ -86,7 +86,7 @@ public interface WebRequest {
      *
      * @throws MalformedURLException if url of response param is malformed
      */
-    public WebRequest setReferer(WebResponse response) throws MalformedURLException;
+    public void setReferer(WebResponse response) throws MalformedURLException;
 
     /**
      * Return collection of (name, value) pairs of parameters which
@@ -102,7 +102,7 @@ public interface WebRequest {
      *
      * @param requestParams collection of (name, value) pairs of request params
      */
-    public WebRequest addParams(Map<String, String> requestParams);
+    public void addParams(Map<String, String> requestParams);
 
     /**
      * Add request parameter to this request, so it will be sent to server
@@ -111,7 +111,7 @@ public interface WebRequest {
      * @param name  name of requets parameter
      * @param value value of request parameter
      */
-    public WebRequest addParam(String name, String value);
+    public void addParam(String name, String value);
 
     /**
      * Return requets method:<br/>

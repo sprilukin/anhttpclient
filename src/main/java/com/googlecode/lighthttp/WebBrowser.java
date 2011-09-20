@@ -97,7 +97,7 @@ public interface WebBrowser {
      *
      * @param headers headers to add
      */
-    public WebBrowser addHeaders(Map<String, String> headers);
+    public void addHeaders(Map<String, String> headers);
 
     /**
      * Add header to web browser specified by name and value so it
@@ -107,7 +107,7 @@ public interface WebBrowser {
      * @param name  name of the http header
      * @param value value of the http header
      */
-    public WebBrowser addHeader(String name, String value);
+    public void addHeader(String name, String value);
 
     /**
      * Used for initializing default headers of browser
@@ -115,7 +115,7 @@ public interface WebBrowser {
      *
      * @param defaultHeaders source map for default headers
      */
-    public WebBrowser setDefaultHeaders(Map defaultHeaders);
+    public void setDefaultHeaders(Map defaultHeaders);
 
     /**
      * Return count of attempts which web browser will undertake to get response
@@ -129,7 +129,7 @@ public interface WebBrowser {
      *
      * @param retryCount count of attempts which web browser will undertake to get response
      */
-    public WebBrowser setRetryCount(Integer retryCount);
+    public void setRetryCount(Integer retryCount);
 
     /**
      * Return time which web browser will whait for every response
@@ -143,7 +143,7 @@ public interface WebBrowser {
      *
      * @param socketTimeout time which web browser will whait for every response
      */
-    public WebBrowser setSocketTimeout(Integer socketTimeout);
+    public void setSocketTimeout(Integer socketTimeout);
 
     /**
      * Return time which web browser will whait for success connection
@@ -161,7 +161,7 @@ public interface WebBrowser {
      * @param connectionTimeout time which web browser will whait for success connection
      * to remote host
      */
-    public WebBrowser setConnectionTimeout(Integer connectionTimeout);
+    public void setConnectionTimeout(Integer connectionTimeout);
 
     /**
      * Return list of cookies which are will be sent with every http request
@@ -176,7 +176,7 @@ public interface WebBrowser {
      *
      * @param cookie {@link Cookie} to add
      */
-    public WebBrowser addCookie(Cookie cookie);
+    public void addCookie(Cookie cookie);
 
     /**
      * Adds list of {@link Cookie} which will be sent with every http request of
@@ -184,31 +184,31 @@ public interface WebBrowser {
      *
      * @param cookies list of cookies to be added
      */
-    public WebBrowser addCookies(List<Cookie> cookies);
+    public void addCookies(List<Cookie> cookies);
 
     /**
      * Remove all cookies from web browser, so
      * it will not send any cookie until it will be sent manually
      * or by some http response
      */
-    public WebBrowser clearAllCookies();
+    public void clearAllCookies();
 
     /**
      * Set up proxy which web browser will use for connection
      * @param url url of the proxy server
      * @param port port of the proxy server
      */
-    public WebBrowser setProxy(String url, int port);
+    public void setProxy(String url, int port);
 
     /**
      * Tells web browser not to use proxy
      */
-    public WebBrowser clearProxy();
+    public void clearProxy();
 
     /**
      * used to abort http request for current thread;
      * @throws IOException
      */
-    public WebBrowser abort();
+    public void abort();
 
 }
