@@ -35,6 +35,7 @@ public interface SimpleHttpServer {
     public void start();
     public void stop();
     public SimpleHttpServer setPort(int port);
+    public int getPort();
     public SimpleHttpServer addHandler(String path, SimpleHttpHandler httpHandler);
     public SimpleHttpServer setDefaultResponseHeaders(Map<String, String> defaultHeaders);
     public SimpleHttpServer addResponseHeader(String name, String value);

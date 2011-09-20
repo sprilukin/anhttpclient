@@ -31,6 +31,7 @@ import com.googlecode.lighthttp.server.BaseSimpleHttpHandler;
 import com.googlecode.lighthttp.server.DefaultSimpleHttpServer;
 import com.googlecode.lighthttp.server.HttpExcahngeFacade;
 import com.googlecode.lighthttp.server.SimpleHttpServer;
+import org.apache.http.protocol.HTTP;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
@@ -52,12 +54,12 @@ import java.util.zip.GZIPOutputStream;
 public class LighthttpTest {
 
     private WebBrowser wb = new DefaultWebBrowser();
+    private Properties defaultHeaders = new Properties();
 
     @Before
     public void initialize() throws Exception {
         InputStream headersAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("com/googlecode/lighthttp/defaultheaders.properties");
 
-        Properties defaultHeaders = new Properties();
         defaultHeaders.load(headersAsStream);
 
         wb.setDefaultHeaders(defaultHeaders);
@@ -78,6 +80,9 @@ public class LighthttpTest {
             @Override
             protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
                 assertEquals("Method should be POST", "POST", httpExcahngeFacade.getRequestMethod());
+                assertEquals("Form should be url-encoded",
+                        HttpConstants.MIME_FORM_ENCODED,
+                        httpExcahngeFacade.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
 
                 try {
                     String postParams = new String(httpExcahngeFacade.getRequestBody());
@@ -108,11 +113,20 @@ public class LighthttpTest {
 
         final String responseText = "Hello from SimpleHttperver";
 
-        SimpleHttpServer server = new DefaultSimpleHttpServer();
+        final SimpleHttpServer server = new DefaultSimpleHttpServer();
         server.addHandler("/get", new BaseSimpleHttpHandler() {
             @Override
             protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
                 assertEquals("Method should be GET", "GET", httpExcahngeFacade.getRequestMethod());
+                assertEquals("Count of request headers should be equal to size of default headers plus additional Host header",
+                        defaultHeaders.size(), httpExcahngeFacade.getRequestHeaders().size() - 1);
+                assertEquals(httpExcahngeFacade.getRequestHeaders().get("Host").get(0), DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
+                for (Map.Entry<String, List<String>> entry: httpExcahngeFacade.getRequestHeaders().entrySet()) {
+                    if (!"Host".equals(entry.getKey())) {
+                        assertEquals(String.format("sent header [%s] not equals to received", entry.getKey()),
+                                defaultHeaders.get(entry.getKey()), entry.getValue().get(0));
+                    }
+                }
                 return responseText.getBytes();
             }
         }).start();

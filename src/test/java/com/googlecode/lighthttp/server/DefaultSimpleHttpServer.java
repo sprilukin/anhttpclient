@@ -25,7 +25,6 @@ package com.googlecode.lighthttp.server;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.apache.commons.io.IOUtils;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.IOException;
@@ -73,19 +72,6 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
 
             //request method
             System.out.println("=== SIMPLE-HTTP-SERVER REQUEST METHOD: " + httpExchange.getRequestMethod());
-
-            //Writing request body
-            //Skip because inputstream can be read here only once
-            /*try {
-                String request = new String(IOUtils.toByteArray(httpExchange.getRequestBody()));
-                if (!"".equals(request.trim())) {
-                    System.out.println("=== SIMPLE-HTTP-SERVER REQUEST BODY: \r\n" + request);
-                } else {
-                    System.out.println("=== SIMPLE-HTTP-SERVER REQUEST BODY IS EMPTY");
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }*/
         }
 
         public void handle(HttpExchange httpExchange) throws IOException {
@@ -153,6 +139,10 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
     public SimpleHttpServer setPort(int port) {
         this.port = port;
         return this;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     public SimpleHttpServer addHandler(String path, SimpleHttpHandler httpHandler) {
