@@ -32,6 +32,20 @@ import com.googlecode.lighthttp.RequestMethod;
  */
 public class HttpDeleteWebRequest extends HttpGetWebRequest {
 
+    public HttpDeleteWebRequest() {
+        /* Default constructor */
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HttpDeleteWebRequest(String url) {
+        super(url);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RequestMethod getRequestMethod() {
         return RequestMethod.DELETE;

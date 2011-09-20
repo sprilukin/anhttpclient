@@ -32,6 +32,20 @@ import com.googlecode.lighthttp.RequestMethod;
  */
 public final class HttpPutWebRequest extends HttpPostWebRequest {
 
+    public HttpPutWebRequest() {
+        /* Default constructor */
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HttpPutWebRequest(String url) {
+        super(url);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RequestMethod getRequestMethod() {
         return RequestMethod.PUT;

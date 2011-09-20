@@ -52,7 +52,7 @@ public class HttpGetWebRequest implements WebRequest {
     }
 
     /**
-     * request url should be initialized in constructor
+     * request url can be initialized in constructor
      *
      * @param url url for request
      */
