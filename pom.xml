@@ -27,7 +27,7 @@
     <groupId>com.googlecode.lighthttp</groupId>
     <artifactId>lighthttp</artifactId>
     <packaging>jar</packaging>
-    <version>0.1</version>
+    <version>0.2</version>
     <name>Light wrapper on top of httpclient</name>
 
     <properties>

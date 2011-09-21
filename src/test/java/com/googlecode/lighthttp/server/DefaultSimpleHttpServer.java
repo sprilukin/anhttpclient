@@ -45,7 +45,7 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
 
     public static final String SERVER_HEADER_NAME = "Server";
     public static final String SERVER_NAME = "SimpleHttpServer";
-    public static final String SERVER_VERSION = "0.1";
+    public static final String SERVER_VERSION = "0.2";
     public static final String FULL_SERVER_NAME = SERVER_NAME + "/" + SERVER_VERSION;
     public static final int DEFAULT_PORT = 8000;
     public static final String DEFAULT_HOST = "localhost";

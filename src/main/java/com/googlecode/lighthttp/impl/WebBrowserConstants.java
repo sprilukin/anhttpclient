@@ -34,7 +34,7 @@ public final class WebBrowserConstants {
      * Default user-agent.
      * May be replaced with {@code User-Agent} request header
      */
-    public static final String DEFAULT_USER_AGENT = "lighthttp/0.1";
+    public static final String DEFAULT_USER_AGENT = "lighthttp/0.2";
 
     /**
      * Default count if retrying unsuccessful HTTP request
