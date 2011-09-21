@@ -149,8 +149,7 @@ public class LighthttpTest {
         server.addHandler("/gzip", new BaseSimpleHttpHandler() {
             @Override
             protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
-                setResponseHeader("Content-Encoding", "gzip");
-                setResponseHeader("Content-length", String.valueOf(responseText.length()));
+                byte[] out = null;
 
                 try {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -158,10 +157,14 @@ public class LighthttpTest {
                     os.write(responseText.getBytes());
                     os.flush();
                     os.close();
-                    return baos.toByteArray();
+                    out = baos.toByteArray();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+
+                setResponseHeader("Content-Encoding", "gzip");
+                setResponseHeader("Content-length", String.valueOf(out.length));
+                return out;
             }
         }).start();
 
