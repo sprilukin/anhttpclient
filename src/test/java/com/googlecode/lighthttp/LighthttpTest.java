@@ -270,8 +270,8 @@ public class LighthttpTest {
         }).start();
 
         EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/postWithBody");
-        req.addPart("param1", body, null, null);
-        req.addPart("param2", requestParam2, null);
+        req.addPart("param1", body);
+        req.addPart("param2", requestParam2);
 
         wb.getResponse(req);
         server.stop();

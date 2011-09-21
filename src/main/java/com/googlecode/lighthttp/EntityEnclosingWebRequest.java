@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -47,11 +46,44 @@ public interface EntityEnclosingWebRequest extends WebRequest {
      * @param partName name of this part
      * @param file file which content will be added
      * @param name name of file which will be reported to server
-     * @param mimeType MIME type of this part
-     * @param charset character set of this part. By default {@code UTF-8} is used
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
+     * @param charset character set of this part. By default {@code UTF-8} will be used used
      * @throws FileNotFoundException if file can not be found
      */
     public void addPart(String partName, File file, String mimeType, String charset, String name) throws IOException;
+
+    /**
+     * <p>Same as {@link #addPart(String, java.io.File, String, String, String)}.</p>
+     * <p>name will be set to {@code null}</p>
+     *
+     * @param partName name of this part
+     * @param file file which content will be added
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
+     * @param charset character set of this part. By default {@code UTF-8} will be used used
+     * @throws FileNotFoundException if file can not be found
+     */
+    public void addPart(String partName, File file, String mimeType, String charset) throws IOException;
+
+    /**
+     * <p>Same as {@link #addPart(String, java.io.File, String, String)}.</p>
+     * <p>will be used default charset: {@code US-ASCII}</p>
+     *
+     * @param partName name of this part
+     * @param file file which content will be added
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
+     * @throws FileNotFoundException if file can not be found
+     */
+    public void addPart(String partName, File file, String mimeType) throws IOException;
+
+    /**
+     * <p>Same as {@link #addPart(String, java.io.File, String)}.</p>
+     * <p>will be used default MIME type: {@code application/octet-stream}</p>
+     *
+     * @param partName name of this part
+     * @param file file which content will be added
+     * @throws FileNotFoundException if file can not be found
+     */
+    public void addPart(String partName, File file) throws IOException;
 
     /**
      * <p>Add content of {@code inputStream} parameter which will be sent as multipart form data with request.</p>
@@ -59,11 +91,32 @@ public interface EntityEnclosingWebRequest extends WebRequest {
      *
      * @param partName name of this part
      * @param inputStream inputStream which content will be added
-     * @param mimeType MIME type of this part
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
      * @param name name of this part which will be reported as file name
      * @throws IOException if exception occurred
      */
     public void addPart(String partName, InputStream inputStream, String mimeType, String name) throws IOException;
+
+    /**
+     * <p>Same as {@link #addPart(String, java.io.InputStream, String, String)}.</p>
+     * <p>name will be set to {@null}</p>
+     *
+     * @param partName name of this part
+     * @param inputStream inputStream which content will be added
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
+     * @throws IOException if exception occurred
+     */
+    public void addPart(String partName, InputStream inputStream, String mimeType) throws IOException;
+
+    /**
+     * <p>Same as {@link #addPart(String, java.io.InputStream, String)}.</p>
+     * <p>will be used default MIME type: {@code application/octet-stream}</p>
+     *
+     * @param partName name of this part
+     * @param inputStream inputStream which content will be added
+     * @throws IOException if exception occurred
+     */
+    public void addPart(String partName, InputStream inputStream) throws IOException;
 
     /**
      * <p>Add {@code string} parameter which will be sent as multipart form data with request.</p>
@@ -76,27 +129,43 @@ public interface EntityEnclosingWebRequest extends WebRequest {
     public void addPart(String partName, String string, String charset);
 
     /**
+     * <p>Same as {@link #addPart(String, String, String)}.</p>
+     * <p>will be used default charset: {@code US-ASCII}</p>
+     *
+     * @param partName name of this part
+     * @param string string which  will be added
+     */
+    public void addPart(String partName, String string);
+
+    /**
      * <p>Add {@code byteArray} parameter which will be sent as multipart form data with request.</p>
      * <p>Please see note for {@link #getFormParams}</p>
      *
      * @param partName name of this part
      * @param byteArray byte array which  will be added
-     * @param mimeType MIME type of this part
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
      * @param name name of this part which will be reported as file name
      */
     public void addPart(String partName, byte[] byteArray, String mimeType, String name);
 
     /**
-     * <p>Add content of {@code serializable} parameter which will be sent as multipart form data with request.</p>
-     * <p>Please see note for {@link #getFormParams}</p>
+     * <p>Same as {@link #addPart(String, byte[], String, String)}.</p>
+     * <p>{@code null} will be used as name</p>
      *
-     * @param partName name o this part
-     * @param serializable serializable which content will be added
-     * @param mimeType MIME type of this part
-     * @param name name of this part which will be reported as file name
-     * @throws IOException is exception occurred
+     * @param partName name of this part
+     * @param byteArray byte array which  will be added
+     * @param mimeType MIME type of this part. By default {@code application/octet-stream} will be used
      */
-    public void addPart(String partName, Serializable serializable, String mimeType, String name) throws IOException;
+    public void addPart(String partName, byte[] byteArray, String mimeType);
+
+    /**
+     * <p>Same as {@link #addPart(String, byte[], String)}.</p>
+     * <p>will be used default MIME type: {@code application/octet-stream}</p>
+     *
+     * @param partName name of this part
+     * @param byteArray byte array which  will be added
+     */
+    public void addPart(String partName, byte[] byteArray);
 
     /**
      * <p>Returns {@link Map} of parts which will be sent as multipart data during request</p>

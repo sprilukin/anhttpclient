@@ -30,13 +30,9 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashMap;
@@ -106,9 +102,44 @@ public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclo
     /**
      * {@inheritDoc}
      */
+    public void addPart(String partName, File file, String mimeType, String charset) throws IOException {
+        addPart(partName, file, mimeType, charset, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, File file, String mimeType) throws IOException {
+        addPart(partName, file, mimeType, null, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, File file) throws IOException {
+        addPart(partName, file, null, null, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void addPart(String partName, InputStream inputStream, String name, String mimeType) throws IOException {
         parts.put(partName, new InputStreamBody(inputStream, getMimeTypeOrDefault(mimeType), name));
         formParams.clear();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, InputStream inputStream, String mimeType) throws IOException {
+        addPart(partName, inputStream, mimeType, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, InputStream inputStream) throws IOException {
+        addPart(partName, inputStream, null, null);
     }
 
     /**
@@ -122,6 +153,13 @@ public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclo
     /**
      * {@inheritDoc}
      */
+    public void addPart(String partName, String string) {
+        addPart(partName, string, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void addPart(String partName, byte[] byteArray, String mimeType, String name) {
         parts.put(partName, new ByteArrayBody(byteArray, getMimeTypeOrDefault(mimeType), name));
         formParams.clear();
@@ -130,25 +168,15 @@ public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclo
     /**
      * {@inheritDoc}
      */
-    public void addPart(String partName, Serializable serializable, String mimeType, String name) throws IOException {
-        ByteArrayOutputStream bos = null;
-        ObjectOutput out = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            out = new ObjectOutputStream(bos);
-            out.writeObject(serializable);
-            byte[] part = bos.toByteArray();
+    public void addPart(String partName, byte[] byteArray, String mimeType) {
+        addPart(partName, byteArray, mimeType, null);
+    }
 
-            addPart(partName, part, mimeType, name);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-
-            if (bos != null) {
-                bos.close();
-            }
-        }
+    /**
+     * {@inheritDoc}
+     */
+    public void addPart(String partName, byte[] byteArray) {
+        addPart(partName, byteArray, null, null);
     }
 
     public Map<String, ContentBody> getParts() {
