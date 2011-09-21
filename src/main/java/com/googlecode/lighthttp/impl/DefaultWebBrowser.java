@@ -45,9 +45,12 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
@@ -421,6 +424,15 @@ public class DefaultWebBrowser implements WebBrowser {
         switch (webRequest.getRequestMethod()) {
             case GET:
                 httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpGet(webRequest.getUrl())));
+                break;
+            case HEAD:
+                httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpHead(webRequest.getUrl())));
+                break;
+            case OPTIONS:
+                httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpOptions(webRequest.getUrl())));
+                break;
+            case TRACE:
+                httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpTrace(webRequest.getUrl())));
                 break;
             case DELETE:
                 httpRequest.set(populateHttpRequestBaseMethod(webRequest, new HttpDelete(webRequest.getUrl())));

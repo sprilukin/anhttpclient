@@ -25,21 +25,21 @@ package com.googlecode.lighthttp.impl;
 import com.googlecode.lighthttp.RequestMethod;
 
 /**
- * Wrapper over HTTP PUT request
+ * Wrapper over HTTP TRACE request
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public final class HttpPutWebRequest extends HttpPostWebRequest {
+public final class HttpTraceWebRequest extends HttpGetWebRequest {
 
-    public HttpPutWebRequest() {
+    public HttpTraceWebRequest() {
         /* Default constructor */
     }
 
     /**
      * {@inheritDoc}
      */
-    public HttpPutWebRequest(String url) {
+    public HttpTraceWebRequest(String url) {
         super(url);
     }
 
@@ -51,6 +51,6 @@ public final class HttpPutWebRequest extends HttpPostWebRequest {
      */
     @Override
     public RequestMethod getRequestMethod() {
-        return RequestMethod.PUT;
+        return RequestMethod.TRACE;
     }
 }

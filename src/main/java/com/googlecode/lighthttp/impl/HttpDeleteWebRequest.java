@@ -30,7 +30,7 @@ import com.googlecode.lighthttp.RequestMethod;
  * @author Sergey Prilukin
  * @version $Id$
  */
-public class HttpDeleteWebRequest extends HttpGetWebRequest {
+public final class HttpDeleteWebRequest extends HttpGetWebRequest {
 
     public HttpDeleteWebRequest() {
         /* Default constructor */
@@ -45,6 +45,9 @@ public class HttpDeleteWebRequest extends HttpGetWebRequest {
 
     /**
      * {@inheritDoc}
+     * <br/>
+     *
+     * @return {@link RequestMethod#DELETE because this is implementation of HTTP DELETE request
      */
     @Override
     public RequestMethod getRequestMethod() {

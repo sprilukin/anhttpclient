@@ -33,5 +33,8 @@ public enum RequestMethod {
     GET,
     POST,
     PUT,
-    DELETE
+    DELETE,
+    HEAD,
+    OPTIONS,
+    TRACE
 }

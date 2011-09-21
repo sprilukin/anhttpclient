@@ -25,21 +25,20 @@ package com.googlecode.lighthttp.impl;
 import com.googlecode.lighthttp.RequestMethod;
 
 /**
- * Wrapper over HTTP PUT request
+ * Wrapper over HTTP OPTIONS request
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public final class HttpPutWebRequest extends HttpPostWebRequest {
-
-    public HttpPutWebRequest() {
+public final class HttpOptionsWebRequest extends HttpGetWebRequest {
+    public HttpOptionsWebRequest() {
         /* Default constructor */
     }
 
     /**
      * {@inheritDoc}
      */
-    public HttpPutWebRequest(String url) {
+    public HttpOptionsWebRequest(String url) {
         super(url);
     }
 
@@ -47,10 +46,10 @@ public final class HttpPutWebRequest extends HttpPostWebRequest {
      * {@inheritDoc}
      * <br/>
      *
-     * @return {@link RequestMethod#PUT} because this is implementation of HTTP PUT request
+     * @return {@link RequestMethod#OPTIONS} because this is implementation of HTTP OPTIONS request
      */
     @Override
     public RequestMethod getRequestMethod() {
-        return RequestMethod.PUT;
+        return RequestMethod.OPTIONS;
     }
 }
