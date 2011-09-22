@@ -49,12 +49,15 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
     public static final String FULL_SERVER_NAME = SERVER_NAME + "/" + SERVER_VERSION;
     public static final int DEFAULT_PORT = 8000;
     public static final String DEFAULT_HOST = "localhost";
+    public static final String HTTP_PREFIX = "http://";
+    public static final String PORT_DELIMITER = ":";
 
     private HttpServer httpServer;
     private int port = DEFAULT_PORT;
-    private Map<String, HttpHandler> handlers = new HashMap<String, HttpHandler>();
+    private Map<String, SimpleHttpHandler> handlers = new HashMap<String, SimpleHttpHandler>();
     private Map<String, String> defaultHeaders = new HashMap<String, String>();
     private final Object handlersMonitor = new Object();
+    private final Object headersMonitor = new Object();
 
     private HttpHandler defaultHandler = new HttpHandler() {
 
@@ -74,13 +77,40 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
             System.out.println("=== SIMPLE-HTTP-SERVER REQUEST METHOD: " + httpExchange.getRequestMethod());
         }
 
+        private void internalHandleRequest(SimpleHttpHandler handler, HttpExchange httpExchange) throws IOException {
+            HttpRequestContext httpRequestContext = new HttpRequestContext(httpExchange);
+
+            byte[] response = handler.getResponse(httpRequestContext);
+
+            //Add default headers
+            for (Map.Entry<String, String> entry: defaultHeaders.entrySet()) {
+                httpExchange.getResponseHeaders().add(entry.getKey(), entry.getValue());
+            }
+
+            //Add headers from handler
+            if (handler.getResponseHeaders() != null && handler.getResponseHeaders().size() > 0) {
+                for (Map.Entry<String, String> entry: handler.getResponseHeaders().entrySet()) {
+                    httpExchange.getResponseHeaders().add(entry.getKey(), entry.getValue());
+                }
+            }
+
+
+            httpExchange.sendResponseHeaders(handler.getResponseCode(httpRequestContext), response != null ? response.length : 0);
+
+            if (response != null && response.length > 0) {
+                httpExchange.getResponseBody().write(response);
+            }
+
+            httpExchange.close();
+        }
+
         public void handle(HttpExchange httpExchange) throws IOException {
             logRequest(httpExchange);
 
             String path = httpExchange.getRequestURI().getPath();
             synchronized (handlersMonitor) {
                 if (handlers.containsKey(path)) {
-                    handlers.get(path).handle(httpExchange);
+                    internalHandleRequest(handlers.get(path), httpExchange);
                 } else {
                     httpExchange.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);
                     httpExchange.close();
@@ -122,7 +152,7 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
     }
 
     public String getBaseUrl() {
-        return (new StringBuilder()).append("http://").append(DEFAULT_HOST).append(":").append(port).toString();
+        return (new StringBuilder()).append(HTTP_PREFIX).append(DEFAULT_HOST).append(PORT_DELIMITER).append(port).toString();
     }
 
     public void start() {
@@ -136,41 +166,33 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
         }
     }
 
-    public SimpleHttpServer setPort(int port) {
+    public void setPort(int port) {
         this.port = port;
-        return this;
     }
 
     public int getPort() {
         return port;
     }
 
-    public SimpleHttpServer addHandler(String path, SimpleHttpHandler httpHandler) {
+    public void addHandler(String path, SimpleHttpHandler httpHandler) {
         createHttpServer();
-
-        if (httpHandler != null) {
-            for (Map.Entry<String, String> entry: defaultHeaders.entrySet()) {
-                if (httpHandler.getResponseHeader(entry.getKey()) == null) {
-                    httpHandler.setResponseHeader(entry.getKey(), entry.getValue());
-                }
-            }
-        }
 
         synchronized (handlersMonitor) {
             handlers.put(path, httpHandler);
         }
 
         httpServer.createContext(path, defaultHandler);
-        return this;
     }
 
-    public SimpleHttpServer setDefaultResponseHeaders(Map<String, String> defaultHeaders) {
-        this.defaultHeaders.putAll(defaultHeaders);
-        return this;
+    public void setDefaultResponseHeaders(Map<String, String> defaultHeaders) {
+        synchronized (headersMonitor) {
+            this.defaultHeaders.putAll(defaultHeaders);
+        }
     }
 
-    public SimpleHttpServer addResponseHeader(String name, String value) {
-        this.defaultHeaders.put(name, value);
-        return this;
+    public void addResponseHeader(String name, String value) {
+        synchronized (headersMonitor) {
+            this.defaultHeaders.put(name, value);
+        }
     }
 }

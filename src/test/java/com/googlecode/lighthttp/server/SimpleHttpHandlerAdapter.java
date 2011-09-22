@@ -22,20 +22,19 @@
 
 package com.googlecode.lighthttp.server;
 
-import com.sun.net.httpserver.HttpExchange;
 import sun.net.www.protocol.http.HttpURLConnection;
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Basic implementation of {@link com.sun.net.httpserver.HttpHandler}
+ * Adapter which implements most methods of {@link SimpleHttpHandler}
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public abstract class BaseSimpleHttpHandler implements SimpleHttpHandler {
+public abstract class SimpleHttpHandlerAdapter implements SimpleHttpHandler {
     private Map<String, String> headers = new HashMap<String, String>();
 
     public void setResponseHeaders(Map<String, String> headers) {
@@ -44,38 +43,15 @@ public abstract class BaseSimpleHttpHandler implements SimpleHttpHandler {
         }
     }
 
-    public String getResponseHeader(String name) {
-        return headers.get(name);
+    public Map<String, String> getResponseHeaders() {
+        return Collections.unmodifiableMap(headers);
     }
 
     public void setResponseHeader(String name, String value) {
         headers.put(name, value);
     }
 
-    protected abstract byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade);
-
-    protected int getResponseCode(HttpExcahngeFacade httpExcahngeFacade) {
+    public int getResponseCode(HttpRequestContext httpRequestContext) {
         return HttpURLConnection.HTTP_OK;
-    }
-
-    public void handle(HttpExchange httpExchange) throws IOException {
-        HttpExcahngeFacade httpExcahngeFacade = new HttpExcahngeFacade(httpExchange);
-
-        byte[] response = getResponse(httpExcahngeFacade);
-
-        //Add headers
-        if (headers != null && headers.size() > 0) {
-            for (Map.Entry<String, String> entry: headers.entrySet()) {
-                httpExchange.getResponseHeaders().add(entry.getKey(), entry.getValue());
-            }
-        }
-
-        httpExchange.sendResponseHeaders(getResponseCode(httpExcahngeFacade), response != null ? response.length : 0);
-
-        if (response != null && response.length > 0) {
-            httpExchange.getResponseBody().write(response);
-        }
-
-        httpExchange.close();
     }
 }

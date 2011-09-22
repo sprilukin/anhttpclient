@@ -30,9 +30,9 @@ import com.googlecode.lighthttp.impl.HttpDeleteWebRequest;
 import com.googlecode.lighthttp.impl.HttpGetWebRequest;
 import com.googlecode.lighthttp.impl.HttpPostWebRequest;
 import com.googlecode.lighthttp.impl.HttpPutWebRequest;
-import com.googlecode.lighthttp.server.BaseSimpleHttpHandler;
+import com.googlecode.lighthttp.server.SimpleHttpHandlerAdapter;
 import com.googlecode.lighthttp.server.DefaultSimpleHttpServer;
-import com.googlecode.lighthttp.server.HttpExcahngeFacade;
+import com.googlecode.lighthttp.server.HttpRequestContext;
 import com.googlecode.lighthttp.server.SimpleHttpServer;
 import org.apache.http.protocol.HTTP;
 import org.junit.Before;
@@ -79,16 +79,15 @@ public class LighthttpTest {
 
 
         SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/post", new BaseSimpleHttpHandler() {
-            @Override
-            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
-                assertEquals("Method should be POST", "POST", httpExcahngeFacade.getRequestMethod());
+        server.addHandler("/post", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+                assertEquals("Method should be POST", "POST", httpRequestContext.getRequestMethod());
                 assertEquals("Form should be url-encoded",
                         HttpConstants.MIME_FORM_ENCODED,
-                        httpExcahngeFacade.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
+                        httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
 
                 try {
-                    String postParams = new String(httpExcahngeFacade.getRequestBody());
+                    String postParams = new String(httpRequestContext.getRequestBody());
                     String[] paramValuePairs = postParams.split("\\&");
                     for (String paramValuePair: paramValuePairs) {
                         String[] paramValueArray = paramValuePair.split("\\=");
@@ -102,7 +101,9 @@ public class LighthttpTest {
 
                 return "OK".getBytes();
             }
-        }).start();
+        });
+
+        server.start();
 
         EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/post");
         req.addFormParams(params);
@@ -117,14 +118,13 @@ public class LighthttpTest {
         final String responseText = "Hello from SimpleHttperver";
 
         final SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/get", new BaseSimpleHttpHandler() {
-            @Override
-            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
-                assertEquals("Method should be GET", "GET", httpExcahngeFacade.getRequestMethod());
+        server.addHandler("/get", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+                assertEquals("Method should be GET", "GET", httpRequestContext.getRequestMethod());
                 assertEquals("Count of request headers should be equal to size of default headers plus additional Host header",
-                        defaultHeaders.size(), httpExcahngeFacade.getRequestHeaders().size() - 1);
-                assertEquals(httpExcahngeFacade.getRequestHeaders().get("Host").get(0), DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
-                for (Map.Entry<String, List<String>> entry: httpExcahngeFacade.getRequestHeaders().entrySet()) {
+                        defaultHeaders.size(), httpRequestContext.getRequestHeaders().size() - 1);
+                assertEquals(httpRequestContext.getRequestHeaders().get("Host").get(0), DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
+                for (Map.Entry<String, List<String>> entry: httpRequestContext.getRequestHeaders().entrySet()) {
                     if (!"Host".equals(entry.getKey())) {
                         assertEquals(String.format("sent header [%s] not equals to received one", entry.getKey()),
                                 defaultHeaders.get(entry.getKey()), entry.getValue().get(0));
@@ -132,7 +132,9 @@ public class LighthttpTest {
                 }
                 return responseText.getBytes();
             }
-        }).start();
+        });
+
+        server.start();
 
         WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/get?param1=value1");
         WebResponse resp = wb.getResponse(req);
@@ -146,9 +148,8 @@ public class LighthttpTest {
         final String responseText = "Hello from SimpleHttperver";
 
         SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/gzip", new BaseSimpleHttpHandler() {
-            @Override
-            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+        server.addHandler("/gzip", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
                 byte[] out = null;
 
                 try {
@@ -166,7 +167,9 @@ public class LighthttpTest {
                 setResponseHeader("Content-length", String.valueOf(out.length));
                 return out;
             }
-        }).start();
+        });
+
+        server.start();
 
         WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/gzip");
         WebResponse resp = wb.getResponse(req);
@@ -178,13 +181,14 @@ public class LighthttpTest {
     public void testDeleteRequest() throws Exception {
 
         final SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/delete", new BaseSimpleHttpHandler() {
-            @Override
-            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
-                assertEquals("Method should be DELETE", "DELETE", httpExcahngeFacade.getRequestMethod());
+        server.addHandler("/delete", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+                assertEquals("Method should be DELETE", "DELETE", httpRequestContext.getRequestMethod());
                 return null;
             }
-        }).start();
+        });
+
+        server.start();
 
         WebRequest req = new HttpDeleteWebRequest(server.getBaseUrl() + "/delete");
         wb.getResponse(req);
@@ -201,16 +205,15 @@ public class LighthttpTest {
 
 
         SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/put", new BaseSimpleHttpHandler() {
-            @Override
-            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
-                assertEquals("Method should be PUT", "PUT", httpExcahngeFacade.getRequestMethod());
+        server.addHandler("/put", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+                assertEquals("Method should be PUT", "PUT", httpRequestContext.getRequestMethod());
                 assertEquals("Form should be url-encoded",
                         HttpConstants.MIME_FORM_ENCODED,
-                        httpExcahngeFacade.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
+                        httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
 
                 try {
-                    String postParams = new String(httpExcahngeFacade.getRequestBody());
+                    String postParams = new String(httpRequestContext.getRequestBody());
                     String[] paramValuePairs = postParams.split("\\&");
                     for (String paramValuePair: paramValuePairs) {
                         String[] paramValueArray = paramValuePair.split("\\=");
@@ -224,7 +227,9 @@ public class LighthttpTest {
 
                 return null;
             }
-        }).start();
+        });
+
+        server.start();
 
         EntityEnclosingWebRequest req = new HttpPutWebRequest(server.getBaseUrl() + "/put");
         req.addFormParams(params);
@@ -254,23 +259,24 @@ public class LighthttpTest {
                 "--zeNfQFxOvIRY_1tTWU-9ArUdJpMkKi9--";
 
         SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/postWithBody", new BaseSimpleHttpHandler() {
-            @Override
-            protected byte[] getResponse(HttpExcahngeFacade httpExcahngeFacade) {
+        server.addHandler("/postWithBody", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
                 try {
-                    byte[] body = httpExcahngeFacade.getRequestBody();
+                    byte[] body = httpRequestContext.getRequestBody();
                     //assertEquals(requestBody, new String(body));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
 
-                assertEquals("Method should be POST", "POST", httpExcahngeFacade.getRequestMethod());
-                assertTrue(httpExcahngeFacade.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0)
+                assertEquals("Method should be POST", "POST", httpRequestContext.getRequestMethod());
+                assertTrue(httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0)
                         .contains("multipart/form-data"));
 
                 return null;
             }
-        }).start();
+        });
+
+        server.start();
 
         EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/postWithBody");
         req.addPart("param1", body);

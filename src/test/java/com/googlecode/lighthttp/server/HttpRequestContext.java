@@ -22,32 +22,39 @@
 
 package com.googlecode.lighthttp.server;
 
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Wrapper over {@link HttpExchange} instance
+ * Encapsulates {@link HttpExchange}
  * to allow access only for it's request related methods
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public final class HttpExcahngeFacade {
+public final class HttpRequestContext {
     private HttpExchange httpExchange;
+    private byte[] requestBody;
 
-    public HttpExcahngeFacade(HttpExchange httpExcahnge) {
+    public HttpRequestContext(HttpExchange httpExcahnge) {
         this.httpExchange = httpExcahnge;
+        try {
+            this.requestBody = IOUtils.toByteArray(httpExcahnge.getRequestBody());
+        } catch (IOException e) {
+            /* ignore */
+        }
     }
 
     public Object getAttribute(String key) {
         return httpExchange.getAttribute(key);
     }
 
-    public Headers getRequestHeaders() {
+    public Map<String, List<String>> getRequestHeaders() {
         return httpExchange.getRequestHeaders();
     }
 
@@ -56,7 +63,7 @@ public final class HttpExcahngeFacade {
     }
 
     public byte[] getRequestBody() throws IOException {
-        return IOUtils.toByteArray(httpExchange.getRequestBody());
+        return requestBody;
     }
 
     public URI getRequestURI() {

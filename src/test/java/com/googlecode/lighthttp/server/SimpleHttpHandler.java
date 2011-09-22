@@ -22,19 +22,17 @@
 
 package com.googlecode.lighthttp.server;
 
-import com.sun.net.httpserver.HttpHandler;
-
 import java.util.Map;
 
 /**
- * Extension for {@link HttpHandler}
- * which allows to manipulate HTTP headers
+ * Class which encapsulates handler for HTTP request
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public abstract interface SimpleHttpHandler extends HttpHandler {
-    public void setResponseHeaders(Map<String, String> headers);
-    public String getResponseHeader(String name);
+public interface SimpleHttpHandler {
+    public Map<String, String> getResponseHeaders();
     public void setResponseHeader(String name, String value);
+    public int getResponseCode(HttpRequestContext httpRequestContext);
+    public byte[] getResponse(HttpRequestContext httpRequestContext);
 }
