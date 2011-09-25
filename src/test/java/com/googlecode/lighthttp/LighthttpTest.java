@@ -257,8 +257,8 @@ public class LighthttpTest {
                 try {
                     byte[] body = httpRequestContext.getRequestBody();
                     assertEquals(
-                            requestBody.replaceAll("--.*", "").replaceAll("[\\r\\n]+", ""),
-                            new String(body).replaceAll("--.*", "").replaceAll("[\\r\\n]+", ""));
+                            requestBody.replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"),
+                            new String(body).replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -271,10 +271,14 @@ public class LighthttpTest {
             }
         });
 
-        EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/postWithBody");
-        req.addPart("param1", body);
-        req.addPart("param2", requestParam2);
+        for (Map.Entry<RequestMethod, Class<? extends WebRequest>> entry: allRequests.entrySet()) {
+            if (entry.getKey().equals(RequestMethod.POST) || entry.getKey().equals(RequestMethod.PUT)) {
+                EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/postWithBody");
+                req.addPart("param1", body);
+                req.addPart("param2", requestParam2);
 
-        wb.getResponse(req);
+                wb.getResponse(req);
+            }
+        }
     }
 }
