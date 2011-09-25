@@ -22,6 +22,7 @@
 
 package com.googlecode.lighthttp.server;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -34,5 +35,5 @@ public interface SimpleHttpHandler {
     public Map<String, String> getResponseHeaders();
     public void setResponseHeader(String name, String value);
     public int getResponseCode(HttpRequestContext httpRequestContext);
-    public byte[] getResponse(HttpRequestContext httpRequestContext);
+    public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException;
 }

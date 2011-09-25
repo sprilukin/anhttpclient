@@ -144,7 +144,7 @@ public class HttpGetWebRequest implements WebRequest {
         StringBuilder urlWithParams = new StringBuilder();
         urlWithParams.append(url);
 
-        if (url.indexOf(QUERY_SIGN) == 0) {
+        if (!url.contains(QUERY_SIGN)) {
             urlWithParams.append(QUERY_SIGN);
         }
 

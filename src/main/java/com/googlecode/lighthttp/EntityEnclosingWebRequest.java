@@ -198,10 +198,35 @@ public interface EntityEnclosingWebRequest extends WebRequest {
     public void addFormParams(Map<String, String> requestParams);
 
     /**
+     * Add parameter to form params. See {@link #getFormParams}
+     *
+     * @param requestParams collection of (name, value) pairs of form request params
+     * @param charset charset of form parameters {@code UTF-8} will be used by default
+     */
+    public void addFormParams(Map<String, String> requestParams, String charset);
+
+    /**
      * Add form request parameter to this request, see {@link #getFormParams}
      *
      * @param name  name of form requets parameter
      * @param value value of form request parameter
      */
     public void addFormParam(String name, String value);
+
+    /**
+     * Add form request parameter to this request, see {@link #getFormParams}
+     *
+     * @param name  name of form requets parameter
+     * @param value value of form request parameter
+     * @param charset charset of all form params. If this method was called with different charset it will be overridden.
+     */
+    public void addFormParam(String name, String value, String charset);
+
+    /**
+     * Returns charset of form parameters.
+     * Willretun {@code UTF-8} if not set.
+     *
+     * @return charset of form params
+     */
+    public String getFormParamsCharset();
 }

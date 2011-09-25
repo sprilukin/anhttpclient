@@ -23,18 +23,23 @@
 package com.googlecode.lighthttp;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.googlecode.lighthttp.impl.DefaultWebBrowser;
 import com.googlecode.lighthttp.impl.HttpDeleteWebRequest;
 import com.googlecode.lighthttp.impl.HttpGetWebRequest;
+import com.googlecode.lighthttp.impl.HttpHeadWebRequest;
+import com.googlecode.lighthttp.impl.HttpOptionsWebRequest;
 import com.googlecode.lighthttp.impl.HttpPostWebRequest;
 import com.googlecode.lighthttp.impl.HttpPutWebRequest;
+import com.googlecode.lighthttp.impl.HttpTraceWebRequest;
 import com.googlecode.lighthttp.server.SimpleHttpHandlerAdapter;
 import com.googlecode.lighthttp.server.DefaultSimpleHttpServer;
 import com.googlecode.lighthttp.server.HttpRequestContext;
 import com.googlecode.lighthttp.server.SimpleHttpServer;
 import org.apache.http.protocol.HTTP;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,6 +47,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,21 +62,101 @@ import java.util.zip.GZIPOutputStream;
  */
 public class LighthttpTest {
 
-    private WebBrowser wb = new DefaultWebBrowser();
-    private Properties defaultHeaders = new Properties();
+    private WebBrowser wb;
+    private Properties defaultHeaders;
+    private Map<RequestMethod, Class<? extends WebRequest>> allRequests;
+    private SimpleHttpServer server;
 
     @Before
     public void initialize() throws Exception {
-        InputStream headersAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("com/googlecode/lighthttp/defaultheaders.properties");
+        InputStream headersAsStream =
+                Thread.currentThread().getContextClassLoader()
+                        .getResourceAsStream("com/googlecode/lighthttp/defaultheaders.properties");
 
+        defaultHeaders = new Properties();
         defaultHeaders.load(headersAsStream);
 
+        wb = new DefaultWebBrowser();
         wb.setDefaultHeaders(defaultHeaders);
         wb.setSocketTimeout(100);
+
+        allRequests = new HashMap<RequestMethod, Class<? extends WebRequest>>(7);
+        allRequests.put(RequestMethod.GET, HttpGetWebRequest.class);
+        allRequests.put(RequestMethod.POST, HttpPostWebRequest.class);
+        allRequests.put(RequestMethod.DELETE, HttpDeleteWebRequest.class);
+        allRequests.put(RequestMethod.HEAD, HttpHeadWebRequest.class);
+        allRequests.put(RequestMethod.OPTIONS, HttpOptionsWebRequest.class);
+        allRequests.put(RequestMethod.PUT, HttpPutWebRequest.class);
+        allRequests.put(RequestMethod.TRACE, HttpTraceWebRequest.class);
+
+        server = new DefaultSimpleHttpServer();
+        server.start();
+    }
+
+    @After
+    public void finish() {
+        server.stop();
     }
 
     @Test
-    public void testPostRequest() throws Exception {
+    public void testRequestMethodsAndDefaultHeadersAndHostAndResponseText() throws Exception {
+        final String methodParamName = "method";
+        final String responseText = "Hello from SimpleHttperver";
+
+        server.addHandler("/index", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException {
+                URI requestURI = httpRequestContext.getRequestURI();
+                assertEquals(methodParamName, requestURI.getQuery().split("=")[0]);
+                String method = requestURI.getQuery().split("=")[1];
+                assertEquals("Method should be " + method, method, httpRequestContext.getRequestMethod());
+
+                //In PUT and POST methods Content-length headers should be added
+                int headersSize =
+                        method.equals(RequestMethod.POST.toString())
+                                || method.equals(RequestMethod.PUT.toString())
+                                ? defaultHeaders.size() + 1
+                                : defaultHeaders.size();
+
+                assertEquals("Count of request headers is incorrect",
+                        headersSize, httpRequestContext.getRequestHeaders().size() - 1);
+                assertEquals("Host request header is unexpected",
+                        httpRequestContext.getRequestHeaders().get("Host").get(0),
+                        DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
+
+                for (Map.Entry<String, List<String>> entry: httpRequestContext.getRequestHeaders().entrySet()) {
+
+                    if ("Content-length".equalsIgnoreCase(entry.getKey())) {
+                        //assertEquals(httpRequestContext.getRequestBody().length,
+                        //        Integer.valueOf(entry.getValue().get(0)).intValue());
+                        continue;
+                    } else if ("Host".equalsIgnoreCase(entry.getKey())) {
+                        continue;
+                    }
+
+                    //Test default headers
+                    assertEquals(String.format("sent header [%s] not equals to received one", entry.getKey()),
+                            defaultHeaders.get(entry.getKey()), entry.getValue().get(0));
+                }
+
+                return responseText.getBytes();
+            }
+        });
+
+        for (Map.Entry<RequestMethod, Class<? extends WebRequest>> entry: allRequests.entrySet()) {
+            WebRequest req = entry.getValue().newInstance();
+            req.setUrl(server.getBaseUrl() + "/index");
+            req.addParam(methodParamName, entry.getKey().toString());
+            WebResponse resp = wb.getResponse(req);
+            if (!entry.getKey().equals(RequestMethod.HEAD)) {
+                assertEquals("Response from server is incorrect", responseText, resp.getText());
+            } else {
+                assertNull(resp.getBytes());
+            }
+        }
+    }
+
+    @Test
+    public void testFormParamsRequest() throws Exception {
         final Map<String, String> params = new HashMap<String, String>();
         params.put("email", "sss@ggg.com");
         params.put("space", "aaa bbb");
@@ -78,13 +164,13 @@ public class LighthttpTest {
         params.put("some_chars", "!@#$%^&*()_+|");
 
 
-        SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/post", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
-                assertEquals("Method should be POST", "POST", httpRequestContext.getRequestMethod());
+        server.addHandler("/formParams", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException {
                 assertEquals("Form should be url-encoded",
-                        HttpConstants.MIME_FORM_ENCODED,
+                        "application/x-www-form-urlencoded; charset=UTF-8",
                         httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
+                assertEquals(httpRequestContext.getRequestBody().length,
+                        Integer.valueOf(httpRequestContext.getRequestHeaders().get("Content-length").get(0)).intValue());
 
                 try {
                     String postParams = new String(httpRequestContext.getRequestBody());
@@ -103,51 +189,23 @@ public class LighthttpTest {
             }
         });
 
-        server.start();
+        for (Map.Entry<RequestMethod, Class<? extends WebRequest>> entry: allRequests.entrySet()) {
+            if (entry.getKey().equals(RequestMethod.POST) || entry.getKey().equals(RequestMethod.PUT)) {
+                EntityEnclosingWebRequest req = (EntityEnclosingWebRequest)entry.getValue().newInstance();
+                req.setUrl(server.getBaseUrl() + "/formParams");
+                req.addFormParams(params);
 
-        EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/post");
-        req.addFormParams(params);
-
-        wb.getResponse(req);
-        server.stop();
-    }
-
-    @Test
-    public void testGetRequest() throws Exception {
-
-        final String responseText = "Hello from SimpleHttperver";
-
-        final SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/get", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
-                assertEquals("Method should be GET", "GET", httpRequestContext.getRequestMethod());
-                assertEquals("Count of request headers should be equal to size of default headers plus additional Host header",
-                        defaultHeaders.size(), httpRequestContext.getRequestHeaders().size() - 1);
-                assertEquals(httpRequestContext.getRequestHeaders().get("Host").get(0), DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
-                for (Map.Entry<String, List<String>> entry: httpRequestContext.getRequestHeaders().entrySet()) {
-                    if (!"Host".equals(entry.getKey())) {
-                        assertEquals(String.format("sent header [%s] not equals to received one", entry.getKey()),
-                                defaultHeaders.get(entry.getKey()), entry.getValue().get(0));
-                    }
-                }
-                return responseText.getBytes();
+                wb.getResponse(req);
             }
-        });
-
-        server.start();
-
-        WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/get?param1=value1");
-        WebResponse resp = wb.getResponse(req);
-        server.stop();
-        assertEquals("Response from server is incorrect", responseText, resp.getText());
+        }
     }
+
 
     @Test
     public void testGzipResponse() throws Exception {
 
         final String responseText = "Hello from SimpleHttperver";
 
-        SimpleHttpServer server = new DefaultSimpleHttpServer();
         server.addHandler("/gzip", new SimpleHttpHandlerAdapter() {
             public byte[] getResponse(HttpRequestContext httpRequestContext) {
                 byte[] out = null;
@@ -169,73 +227,9 @@ public class LighthttpTest {
             }
         });
 
-        server.start();
-
         WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/gzip");
         WebResponse resp = wb.getResponse(req);
-        server.stop();
         assertEquals("Response from server is incorrect", responseText, resp.getText());
-    }
-
-    @Test
-    public void testDeleteRequest() throws Exception {
-
-        final SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/delete", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
-                assertEquals("Method should be DELETE", "DELETE", httpRequestContext.getRequestMethod());
-                return null;
-            }
-        });
-
-        server.start();
-
-        WebRequest req = new HttpDeleteWebRequest(server.getBaseUrl() + "/delete");
-        wb.getResponse(req);
-        server.stop();
-    }
-
-    @Test
-    public void testPutRequest() throws Exception {
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("email", "sss@ggg.com");
-        params.put("space", "aaa bbb");
-        params.put("russian", "привет");
-        params.put("some_chars", "!@#$%^&*()_+|");
-
-
-        SimpleHttpServer server = new DefaultSimpleHttpServer();
-        server.addHandler("/put", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
-                assertEquals("Method should be PUT", "PUT", httpRequestContext.getRequestMethod());
-                assertEquals("Form should be url-encoded",
-                        HttpConstants.MIME_FORM_ENCODED,
-                        httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
-
-                try {
-                    String postParams = new String(httpRequestContext.getRequestBody());
-                    String[] paramValuePairs = postParams.split("\\&");
-                    for (String paramValuePair: paramValuePairs) {
-                        String[] paramValueArray = paramValuePair.split("\\=");
-                        String param = paramValueArray[0];
-                        String value = java.net.URLDecoder.decode(paramValueArray[1], "UTF-8");
-                        assertEquals(String.format("incorrect param value"), value, params.get(param));
-                    }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                return null;
-            }
-        });
-
-        server.start();
-
-        EntityEnclosingWebRequest req = new HttpPutWebRequest(server.getBaseUrl() + "/put");
-        req.addFormParams(params);
-
-        wb.getResponse(req);
-        server.stop();
     }
 
     @Test
@@ -258,12 +252,13 @@ public class LighthttpTest {
                 "Test request body string\n" +
                 "--zeNfQFxOvIRY_1tTWU-9ArUdJpMkKi9--";
 
-        SimpleHttpServer server = new DefaultSimpleHttpServer();
         server.addHandler("/postWithBody", new SimpleHttpHandlerAdapter() {
             public byte[] getResponse(HttpRequestContext httpRequestContext) {
                 try {
                     byte[] body = httpRequestContext.getRequestBody();
-                    //assertEquals(requestBody, new String(body));
+                    assertEquals(
+                            requestBody.replaceAll("--.*", "").replaceAll("[\\r\\n]+", ""),
+                            new String(body).replaceAll("--.*", "").replaceAll("[\\r\\n]+", ""));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -276,13 +271,10 @@ public class LighthttpTest {
             }
         });
 
-        server.start();
-
         EntityEnclosingWebRequest req = new HttpPostWebRequest(server.getBaseUrl() + "/postWithBody");
         req.addPart("param1", body);
         req.addPart("param2", requestParam2);
 
         wb.getResponse(req);
-        server.stop();
     }
 }

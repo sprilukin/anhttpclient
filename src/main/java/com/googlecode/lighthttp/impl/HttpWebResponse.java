@@ -22,7 +22,7 @@
 
 package com.googlecode.lighthttp.impl;
 
-import com.googlecode.lighthttp.HttpConstants;
+import com.googlecode.lighthttp.RequestMethod;
 import com.googlecode.lighthttp.WebResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -74,6 +74,11 @@ public final class HttpWebResponse implements WebResponse {
      */
     private void setResponseBody(HttpResponse httpResponse) throws IOException {
         HttpEntity entity = httpResponse.getEntity();
+
+        if (entity == null) {
+            return;
+        }
+
         InputStream content = entity.getContent();
         try {
             responseBody = IOUtils.toByteArray(content);
@@ -96,7 +101,11 @@ public final class HttpWebResponse implements WebResponse {
         setResponseHeaders(httpReponse);
         try {
             url = new URL(httpRequestBase.getURI().toString());
-            setResponseBody(httpReponse);
+
+            //HTTP HEAD request should returns only headers without body
+            if (!RequestMethod.HEAD.toString().equals(httpRequestBase.getMethod())) {
+                setResponseBody(httpReponse);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

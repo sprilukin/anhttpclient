@@ -29,6 +29,7 @@ import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.protocol.HTTP;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclo
     public static String OCTET_STREAM_MIME_TYPE = "application/octet-stream";
     public static String TEXT_PLAIN_MIME_TYPE = "text/plain";
 
+    protected String formParamsCharset = HTTP.UTF_8;
     protected Map<String, String> formParams = new HashMap<String, String>();
     Map<String, ContentBody> parts = new HashMap<String, ContentBody>();
 
@@ -79,7 +81,15 @@ public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclo
      * {@inheritDoc}
      */
     public void addFormParams(Map<String, String> requestParams) {
+        addFormParams(requestParams, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addFormParams(Map<String, String> requestParams, String charset) {
         parts.clear();
+        formParamsCharset = charset != null ? charset : HTTP.UTF_8;
         formParams.putAll(requestParams);
     }
 
@@ -87,8 +97,23 @@ public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclo
      * {@inheritDoc}
      */
     public void addFormParam(String name, String value) {
+        addFormParam(name, value, null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addFormParam(String name, String value, String charset) {
         parts.clear();
+        formParamsCharset = charset != null ? charset : HTTP.UTF_8;
         formParams.put(name, value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getFormParamsCharset() {
+        return formParamsCharset;
     }
 
     /**

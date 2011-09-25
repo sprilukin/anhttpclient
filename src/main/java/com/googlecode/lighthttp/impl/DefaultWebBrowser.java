@@ -181,6 +181,11 @@ public class DefaultWebBrowser implements WebBrowser {
             ((AbstractHttpClient)httpClient).addResponseInterceptor(new HttpResponseInterceptor() {
                 public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
                     HttpEntity entity = response.getEntity();
+                    if (entity == null) {
+                        log.debug("LIGHTHTTP. Response entity is NULL");
+                        return;
+                    }
+
                     Header contentEncodingHeader = entity.getContentEncoding();
                     if (contentEncodingHeader != null) {
                         HeaderElement[] codecs = contentEncodingHeader.getElements();
@@ -300,7 +305,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private HttpResponse executeMethod(HttpUriRequest httpUriRequest) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: httpUriRequest.getAllHeaders()) {
-                log.debug(String.format("LIGHTHTTP REQUEST HEADER: [%s: %s]", header.getName(), header.getValue()));
+                log.debug(String.format("LIGHTHTTP. Request header: [%s: %s]", header.getName(), header.getValue()));
             }
         }
 
@@ -355,27 +360,33 @@ public class DefaultWebBrowser implements WebBrowser {
 
         HttpEntity entity = null;
 
-        if (webRequestWithBody.getParts().size() == 0) {
-            httpRequest.addHeader(HTTP.CONTENT_TYPE, HttpConstants.MIME_FORM_ENCODED);
+        if (webRequestWithBody.getFormParams() != null
+                    && webRequestWithBody.getFormParams().size() > 0) {
 
-            // data - name/value params
-            List<NameValuePair> nameValuePairList = null;
-            Map<String, String> requestParams = webRequestWithBody.getFormParams();
-            if ((requestParams != null) && (requestParams.size() > 0)) {
-                nameValuePairList = new ArrayList<NameValuePair>();
-                for (Map.Entry<String, String> entry : requestParams.entrySet()) {
-                    nameValuePairList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-                }
-            }
+                StringBuilder contentType =
+                        (new StringBuilder(HttpConstants.MIME_FORM_ENCODED)).append("; charset=")
+                                .append(webRequestWithBody.getFormParamsCharset());
 
-            if (nameValuePairList != null) {
-                try {
-                    entity = new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8);
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
+                httpRequest.addHeader(HTTP.CONTENT_TYPE, contentType.toString());
+
+                // data - name/value params
+                List<NameValuePair> nameValuePairList = null;
+                Map<String, String> requestParams = webRequestWithBody.getFormParams();
+                if ((requestParams != null) && (requestParams.size() > 0)) {
+                    nameValuePairList = new ArrayList<NameValuePair>();
+                    for (Map.Entry<String, String> entry : requestParams.entrySet()) {
+                        nameValuePairList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+                    }
                 }
-            }
-        } else {
+
+                if (nameValuePairList != null) {
+                    try {
+                        entity = new UrlEncodedFormEntity(nameValuePairList, HTTP.UTF_8);
+                    } catch (UnsupportedEncodingException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        } else if (webRequestWithBody.getParts().size() > 0) {
             entity = new MultipartEntity();
             for (Map.Entry<String, ContentBody> entry: webRequestWithBody.getParts().entrySet()) {
                 ((MultipartEntity)entity).addPart(entry.getKey(), entry.getValue());
@@ -401,7 +412,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private WebResponse processResponse(HttpResponse response, HttpRequestBase httpMethodBase, String charset) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: response.getAllHeaders()) {
-                log.debug(String.format("LIGHTHTTP RESPONSE HEADER: [%s: %s]", header.getName(), header.getValue()));
+                log.debug(String.format("LIGHTHTTP. Response header: [%s: %s]", header.getName(), header.getValue()));
             }
         }
 
@@ -451,14 +462,10 @@ public class DefaultWebBrowser implements WebBrowser {
 
         HttpResponse response = executeMethod(httpRequest.get());
         if (response == null) {
-            throw new IOException("LIGHTHTTP: An empty response received from server. Possible reason: host is offline");
+            throw new IOException("LIGHTHTTP. An empty response received from server. Possible reason: host is offline");
         }
 
         resp = processResponse(response, httpRequest.get(), charset);
-        if (log.isDebugEnabled()) {
-            log.debug(String.format("LIGHTHTTP REQUEST COMPLETED. SIZE: %s", resp.getBytes().length));
-        }
-
         return resp;
     }
 

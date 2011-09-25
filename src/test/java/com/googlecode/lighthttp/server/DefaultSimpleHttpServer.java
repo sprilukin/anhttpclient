@@ -22,6 +22,7 @@
 
 package com.googlecode.lighthttp.server;
 
+import com.googlecode.lighthttp.RequestMethod;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -97,7 +98,8 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
 
             httpExchange.sendResponseHeaders(handler.getResponseCode(httpRequestContext), response != null ? response.length : 0);
 
-            if (response != null && response.length > 0) {
+            if (response != null && response.length > 0
+                    && !RequestMethod.HEAD.toString().equals(httpExchange.getRequestMethod())) {
                 httpExchange.getResponseBody().write(response);
             }
 
