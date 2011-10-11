@@ -30,6 +30,7 @@ import com.googlecode.lighthttp.WebResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Thread safe implementation of {@link com.googlecode.lighthttp.WebBrowser}
@@ -64,90 +65,163 @@ public final class ThreadLocalWebBrowser implements WebBrowser {
         return ThreadLocalWebBrowser.instance;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public WebResponse getResponse(String url) throws IOException {
         return webBrowser.get().getResponse(url);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public WebResponse getResponse(String url, String expectedResponseCharset) throws IOException {
         return webBrowser.get().getResponse(url, expectedResponseCharset);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public WebResponse getResponse(WebRequest webRequest) throws IOException {
         return webBrowser.get().getResponse(webRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public WebResponse getResponse(WebRequest webRequest, String expectedResponseCharset) throws IOException {
         return webBrowser.get().getResponse(webRequest, expectedResponseCharset);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String> getHeaders() {
         return webBrowser.get().getHeaders();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String getHeader(String headerName) {
         return webBrowser.get().getHeader(headerName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addHeaders(Map<String, String> headers) {
         webBrowser.get().addHeaders(headers);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addHeader(String name, String value) {
         webBrowser.get().addHeader(name, value);
     }
 
-    public void setDefaultHeaders(Map defaultHeaders) {
+    /**
+     * {@inheritDoc}
+     */
+    public void setDefaultHeaders(Map<String, String> defaultHeaders) {
         webBrowser.get().setDefaultHeaders(defaultHeaders);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setDefaultHeaders(Properties defaultHeaders) {
+        webBrowser.get().setDefaultHeaders(defaultHeaders);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public Integer getRetryCount() {
         return webBrowser.get().getRetryCount();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setRetryCount(Integer retryCount) {
         webBrowser.get().setRetryCount(retryCount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Integer getSocketTimeout() {
         return webBrowser.get().getSocketTimeout();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setSocketTimeout(Integer socketTimeout) {
         webBrowser.get().setSocketTimeout(socketTimeout);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Integer getConnectionTimeout() {
         return webBrowser.get().getConnectionTimeout();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setConnectionTimeout(Integer connectionTimeout) {
         webBrowser.get().setConnectionTimeout(connectionTimeout);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public List<Cookie> getCookies() {
         return webBrowser.get().getCookies();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addCookie(Cookie cookie) {
         webBrowser.get().addCookie(cookie);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addCookies(List<Cookie> cookies) {
         webBrowser.get().addCookies(cookies);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void clearAllCookies() {
         webBrowser.get().clearAllCookies();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setProxy(String url, int port) {
         webBrowser.get().setProxy(url, port);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void clearProxy() {
         webBrowser.get().clearProxy();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void abort() {
         webBrowser.get().abort();
     }

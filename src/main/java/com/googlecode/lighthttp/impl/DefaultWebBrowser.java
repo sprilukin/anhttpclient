@@ -28,6 +28,7 @@ import com.googlecode.lighthttp.HttpConstants;
 import com.googlecode.lighthttp.WebBrowser;
 import com.googlecode.lighthttp.WebRequest;
 import com.googlecode.lighthttp.WebResponse;
+import com.sun.istack.internal.Nullable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -82,11 +83,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
 /**
  * Default implementation of {@link WebBrowser}
- * Has such configureable parameters:
+ * Has such configurable parameters:
  * - default headers    : Collection of HTTP headers which will be sent with every http request
  * - retry count        : count of repeating http request if previous one was unsuccessful
  * - connection timeout : time in milliseconds which determine connection timeout of HTTP request
@@ -136,7 +138,7 @@ public class DefaultWebBrowser implements WebBrowser {
      * @param httpClient instance of {@link HttpClient}
      */
     public void setHttpClient(HttpClient httpClient) {
-        synchronized (this.getClass()) {
+        synchronized (this) {
             this.httpClient = httpClient;
             this.initialized = false;
         }
@@ -145,7 +147,7 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * Allows to set {@link HttpParams}
      * Will take effect only if httpClient is initialized inside DefaultWebBrowser
-     * @param httpParams {@HttpParams} to set.
+     * @param httpParams {@link HttpParams} to set.
      */
     public void setHttpParams(HttpParams httpParams) {
         this.httpParams = httpParams;
@@ -154,7 +156,7 @@ public class DefaultWebBrowser implements WebBrowser {
         }
 
         if (httpClient != null && httpClient instanceof DefaultHttpClient) {
-            synchronized (this.getClass()) {
+            synchronized (this) {
                 httpClient = null;
                 this.initialized = false;
             }
@@ -223,7 +225,7 @@ public class DefaultWebBrowser implements WebBrowser {
      */
     private void initHttpClient() {
         if (!this.initialized) {
-            synchronized (this.getClass()) {
+            synchronized (this) {
                 if (!this.initialized) {
                     if (httpClient == null) {
                         if (httpParams == null) {
@@ -243,10 +245,21 @@ public class DefaultWebBrowser implements WebBrowser {
     /**
      * {@inheritDoc}
      */
-    public void setDefaultHeaders(final Map defaultHeaders) {
+    public void setDefaultHeaders(final Map<String, String> defaultHeaders) {
         this.defaultHeaders.clear();
-        for (Object entryObject : defaultHeaders.entrySet()) {
-            Map.Entry<Object, Object> entry = (Map.Entry<Object, Object>)entryObject;
+        for (Map.Entry<String, String> entryObject : defaultHeaders.entrySet()) {
+            String headerName = entryObject.getKey();
+            String headerValue = entryObject.getValue();
+            this.addHeader(headerName, headerValue);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setDefaultHeaders(Properties defaultHeaders) {
+        this.defaultHeaders.clear();
+        for (Map.Entry<Object, Object> entry: defaultHeaders.entrySet()) {
             String headerName = String.valueOf(entry.getKey());
             String headerValue = String.valueOf(entry.getValue());
             this.addHeader(headerName, headerValue);
@@ -404,6 +417,7 @@ public class DefaultWebBrowser implements WebBrowser {
      * If {@link HttpRequestBase} httpMethodBase has :location: header in response headers then
      * redirect will be perfirmed
      *
+     * @param response {@link org.apache.http.HttpResponse} which will be wrapped into {@link WebResponse}
      * @param httpMethodBase {@link HttpRequestBase} with original request
      * @param charset charset of response text content
      * @return web response which is not needed in redirects
@@ -466,6 +480,7 @@ public class DefaultWebBrowser implements WebBrowser {
         }
 
         resp = processResponse(response, httpRequest.get(), charset);
+        httpRequest.set(null);
         return resp;
     }
 

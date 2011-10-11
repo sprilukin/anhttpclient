@@ -25,6 +25,7 @@ package com.googlecode.lighthttp;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Interface for creating and using easy http client
@@ -79,7 +80,7 @@ public interface WebBrowser {
     /**
      * Return all http headers which are sent with every http request
      *
-     * @return {@link Map<String, String>} with (name, value) pairs of http headers
+     * @return {@code Map} with (name, value) pairs of http headers
      */
     public Map<String, String> getHeaders();
 
@@ -115,7 +116,15 @@ public interface WebBrowser {
      *
      * @param defaultHeaders source map for default headers
      */
-    public void setDefaultHeaders(Map defaultHeaders);
+    public void setDefaultHeaders(Map<String, String> defaultHeaders);
+
+    /**
+     * Used for initializing default headers of browser
+     * from map
+     *
+     * @param defaultHeaders {@link java.util.Properties} which contains default properties
+     */
+    public void setDefaultHeaders(Properties defaultHeaders);
 
     /**
      * Return count of attempts which web browser will undertake to get response
@@ -207,7 +216,6 @@ public interface WebBrowser {
 
     /**
      * used to abort http request for current thread;
-     * @throws IOException
      */
     public void abort();
 
