@@ -22,10 +22,10 @@
 
 package com.googlecode.lighthttp.impl;
 
-import com.googlecode.lighthttp.Cookie;
 import com.googlecode.lighthttp.WebBrowser;
 import com.googlecode.lighthttp.WebRequest;
 import com.googlecode.lighthttp.WebResponse;
+import org.apache.http.cookie.Cookie;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -252,6 +252,13 @@ public final class MultiThreadWebBrowser implements WebBrowser {
      */
     public List<Cookie> getCookies() {
         return getBrowserForCurrentThread().getCookies();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Cookie getCookieByName(String name) {
+        return getBrowserForCurrentThread().getCookieByName(name);
     }
 
     private final Object cookieMonitor = new Object();

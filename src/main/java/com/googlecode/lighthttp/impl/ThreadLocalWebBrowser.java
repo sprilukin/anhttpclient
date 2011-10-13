@@ -22,10 +22,10 @@
 
 package com.googlecode.lighthttp.impl;
 
-import com.googlecode.lighthttp.Cookie;
 import com.googlecode.lighthttp.WebBrowser;
 import com.googlecode.lighthttp.WebRequest;
 import com.googlecode.lighthttp.WebResponse;
+import org.apache.http.cookie.Cookie;
 
 import java.io.IOException;
 import java.util.List;
@@ -182,6 +182,13 @@ public final class ThreadLocalWebBrowser implements WebBrowser {
      */
     public List<Cookie> getCookies() {
         return webBrowser.get().getCookies();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Cookie getCookieByName(String name) {
+        return webBrowser.get().getCookieByName(name);
     }
 
     /**

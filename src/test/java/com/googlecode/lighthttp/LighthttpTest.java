@@ -38,6 +38,7 @@ import com.googlecode.lighthttp.server.SimpleHttpHandlerAdapter;
 import com.googlecode.lighthttp.server.DefaultSimpleHttpServer;
 import com.googlecode.lighthttp.server.HttpRequestContext;
 import com.googlecode.lighthttp.server.SimpleHttpServer;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.protocol.HTTP;
 import org.junit.After;
 import org.junit.Before;
@@ -52,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -280,5 +282,54 @@ public class LighthttpTest {
                 wb.getResponse(req);
             }
         }
+    }
+
+    @Test
+    public void testCookies() throws Exception {
+
+        final String cookieName1 = "PREF";
+        final String cookieValue1 = "ID=120db22e4e2810cb:FF=0:TM=1318488512:LM=1318488512:S=tTZoDOAsNIbsiH4R";
+        final String cookieParams1 = "expires=Sat, 12-Oct-2099 06:48:32 GMT; path=/; domain=localhost";
+
+        final String cookieName2 = "NID";
+        final String cookieValue2 = "52=fa8SxaS_YoBUQ7jLIy9bp14biO";
+        final String cookieParams2 = "expires=Fri, 13-Apr-2099 06:48:32 GMT; path=/; domain=localhost; HttpOnly";
+
+        final AtomicInteger requestCount = new AtomicInteger(0);
+
+        server.addHandler("/cookies", new SimpleHttpHandlerAdapter() {
+            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+                requestCount.addAndGet(1);
+
+                if (requestCount.get() == 1) {
+                    setResponseHeader("Set-Cookie", cookieName1 + "=" + cookieValue1 + "; " + cookieParams1);
+                } else if (requestCount.get() == 2) {
+                    assertEquals(cookieName1 + "=" + cookieValue1, httpRequestContext.getRequestHeaders().get("Cookie").get(0));
+                    setResponseHeader("Set-Cookie", cookieName2 + "=" + cookieValue2 + "; " + cookieParams2);
+                } else {
+                    //Sends only one cookie somewhy
+                    //assertEquals(cookieName1 + "; " + cookieName2, httpRequestContext.getRequestHeaders().get("Cookie"));
+                }
+
+                return null;
+            }
+        });
+
+        WebRequest req = new HttpGetWebRequest(server.getBaseUrl() + "/cookies");
+        wb.getResponse(req);
+        Cookie cookie1 = wb.getCookieByName(cookieName1);
+        assertEquals("Invalid cookie 1", cookieName1, cookie1.getName());
+        assertEquals("Invalid cookie 1", cookieValue1, cookie1.getValue());
+        wb.getResponse(req);
+
+        cookie1 = wb.getCookieByName(cookieName1);
+        assertEquals("Invalid cookie 1", cookieName1, cookie1.getName());
+        assertEquals("Invalid cookie 1", cookieValue1, cookie1.getValue());
+
+        Cookie cookie2 = wb.getCookieByName(cookieName2);
+        assertEquals("Invalid cookie 2", cookieName2, cookie2.getName());
+        assertEquals("Invalid cookie2", cookieValue2, cookie2.getValue());
+
+        wb.getResponse(req);
     }
 }

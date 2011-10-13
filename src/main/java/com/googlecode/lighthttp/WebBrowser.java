@@ -22,6 +22,8 @@
 
 package com.googlecode.lighthttp;
 
+import org.apache.http.cookie.Cookie;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -178,6 +180,14 @@ public interface WebBrowser {
      * @return list of cookies which are will be sent with every http request
      */
     public List<Cookie> getCookies();
+
+    /**
+     * Return cookie which matches passed name
+     *
+     * @param name name of the cookie to find
+     * @return {@link Cookie} which matches passed name parameter
+     */
+    public Cookie getCookieByName(String name);
 
     /**
      * Adds {@link Cookie} which will be sent with every http request of

@@ -22,13 +22,11 @@
 
 package com.googlecode.lighthttp.impl;
 
-import com.googlecode.lighthttp.Cookie;
 import com.googlecode.lighthttp.EntityEnclosingWebRequest;
 import com.googlecode.lighthttp.HttpConstants;
 import com.googlecode.lighthttp.WebBrowser;
 import com.googlecode.lighthttp.WebRequest;
 import com.googlecode.lighthttp.WebResponse;
-import com.sun.istack.internal.Nullable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -57,6 +55,7 @@ import org.apache.http.client.params.ClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.cookie.params.CookieSpecPNames;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.mime.MultipartEntity;
@@ -566,30 +565,24 @@ public class DefaultWebBrowser implements WebBrowser {
      * {@inheritDoc}
      */
     public List<Cookie> getCookies() {
-        List<Cookie> cookies = new ArrayList<Cookie>();
-        for (org.apache.http.cookie.Cookie apacheCookie : cookieStore.getCookies()) {
-            Cookie cookie = new SimpleCookie();
-            cookie.setDomain(apacheCookie.getDomain());
-            cookie.setName(apacheCookie.getName());
-            cookie.setValue(apacheCookie.getValue());
-            cookie.setPath(apacheCookie.getPath());
-            cookies.add(cookie);
+        return cookieStore.getCookies();
+    }
+
+    public Cookie getCookieByName(String name) {
+        for (Cookie cookie: cookieStore.getCookies()) {
+            if (cookie.getName().equals(name)) {
+                return cookie;
+            }
         }
 
-        return cookies;
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     public void addCookie(Cookie cookie) {
-        BasicClientCookie apacheCookie =
-                new BasicClientCookie(
-                        cookie.getName(), cookie.getValue()
-                );
-        apacheCookie.setPath(cookie.getPath());
-        apacheCookie.setDomain(cookie.getDomain());
-        cookieStore.addCookie(apacheCookie);
+        cookieStore.addCookie(cookie);
     }
 
     /**
