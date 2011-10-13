@@ -27,6 +27,7 @@ import com.googlecode.lighthttp.HttpConstants;
 import com.googlecode.lighthttp.WebBrowser;
 import com.googlecode.lighthttp.WebRequest;
 import com.googlecode.lighthttp.WebResponse;
+import com.googlecode.lighthttp.impl.request.HttpGetWebRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;

@@ -20,26 +20,26 @@
  * SOFTWARE.
  */
 
-package com.googlecode.lighthttp.impl;
+package com.googlecode.lighthttp.impl.request;
 
 import com.googlecode.lighthttp.RequestMethod;
 
 /**
- * Wrapper over HTTP DELETE request
+ * Wrapper over HTTP TRACE request
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public final class HttpDeleteWebRequest extends HttpGetWebRequest {
+public final class HttpTraceWebRequest extends HttpGetWebRequest {
 
-    public HttpDeleteWebRequest() {
+    public HttpTraceWebRequest() {
         /* Default constructor */
     }
 
     /**
      * {@inheritDoc}
      */
-    public HttpDeleteWebRequest(String url) {
+    public HttpTraceWebRequest(String url) {
         super(url);
     }
 
@@ -47,10 +47,10 @@ public final class HttpDeleteWebRequest extends HttpGetWebRequest {
      * {@inheritDoc}
      * <br/>
      *
-     * @return {@link RequestMethod#DELETE because this is implementation of HTTP DELETE request
+     * @return {@link RequestMethod#PUT} because this is implementation of HTTP PUT request
      */
     @Override
     public RequestMethod getRequestMethod() {
-        return RequestMethod.DELETE;
+        return RequestMethod.TRACE;
     }
 }

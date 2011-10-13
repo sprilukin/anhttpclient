@@ -20,26 +20,26 @@
  * SOFTWARE.
  */
 
-package com.googlecode.lighthttp.impl;
+package com.googlecode.lighthttp.impl.request;
 
 import com.googlecode.lighthttp.RequestMethod;
 
 /**
- * Wrapper over HTTP TRACE request
+ * Wrapper over HTTP HEAD request
  *
  * @author Sergey Prilukin
  * @version $Id$
  */
-public final class HttpTraceWebRequest extends HttpGetWebRequest {
+public final class HttpHeadWebRequest extends HttpGetWebRequest {
 
-    public HttpTraceWebRequest() {
+    public HttpHeadWebRequest() {
         /* Default constructor */
     }
 
     /**
      * {@inheritDoc}
      */
-    public HttpTraceWebRequest(String url) {
+    public HttpHeadWebRequest(String url) {
         super(url);
     }
 
@@ -47,10 +47,10 @@ public final class HttpTraceWebRequest extends HttpGetWebRequest {
      * {@inheritDoc}
      * <br/>
      *
-     * @return {@link RequestMethod#PUT} because this is implementation of HTTP PUT request
+     * @return {@link RequestMethod#HEAD} because this is implementation of HTTP HEAD request
      */
     @Override
     public RequestMethod getRequestMethod() {
-        return RequestMethod.TRACE;
+        return RequestMethod.HEAD;
     }
 }

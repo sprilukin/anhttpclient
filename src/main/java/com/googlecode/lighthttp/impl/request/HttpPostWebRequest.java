@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.googlecode.lighthttp.impl;
+package com.googlecode.lighthttp.impl.request;
 
 import com.googlecode.lighthttp.EntityEnclosingWebRequest;
 import com.googlecode.lighthttp.RequestMethod;
