@@ -2,13 +2,13 @@
 
 ## anhttp library (acronym for "Another HTTP") intended to reduce amount of efforts to integrate robust and powerful Apache httpclient library into your code
 
-Example
+### Example
 
     WebBrowser webBrowser = new DefaultWebBrowser();
     WebResponse response = webBrowser.getResponse("http://someaddress.com");
     System.out.println(response.getText());
 
-## Using as a maven dependency
+### Using as a maven dependency
 
     <dependency>
         <groupId>anhttp</groupId>
@@ -16,7 +16,7 @@ Example
         <version>0.3</version>
     </dependency>
 
-## Installing into local maven repository
+### Installing into local maven repository
 
 download last version of anhttp, its sources and pom file and then install them into local maven repository by running next command:
 
