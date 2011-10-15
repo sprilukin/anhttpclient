@@ -13,7 +13,7 @@ Example
     <dependency>
         <groupId>anhttp</groupId>
         <artifactId>anhttp</artifactId>
-        <version>0.2</version>
+        <version>0.3</version>
     </dependency>
 
 ## Installing into local maven repository
@@ -22,9 +22,9 @@ download last version of anhttp, its sources and pom file and then install them 
 
     mvn install:install-file -DgroupId=anhttp \
         -DartifactId=anhttp \
-        -Dversion=0.2 \
-        -Dfile=anhttp-0.2.jar \
-        -Dsources=anhttp-0.2-sources.jar \
+        -Dversion=0.3 \
+        -Dfile=anhttp-0.3.jar \
+        -Dsources=anhttp-0.3-sources.jar \
         -Dpackaging=jar \
-        -DpomFile=anhttp-0.2.pom \
+        -DpomFile=anhttp-0.3.pom \
         -DcreateChecksum=true
