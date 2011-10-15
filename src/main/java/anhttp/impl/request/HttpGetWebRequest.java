@@ -36,7 +36,6 @@ import java.util.Map;
  * Wrapper over HTTP GET request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public class HttpGetWebRequest implements WebRequest {
     public static final String QUERY_SIGN = "?";

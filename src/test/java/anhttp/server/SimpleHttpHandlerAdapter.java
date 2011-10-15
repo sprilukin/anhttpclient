@@ -32,7 +32,6 @@ import java.util.Map;
  * Adapter which implements most methods of {@link SimpleHttpHandler}
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public abstract class SimpleHttpHandlerAdapter implements SimpleHttpHandler {
     private Map<String, String> headers = new HashMap<String, String>();

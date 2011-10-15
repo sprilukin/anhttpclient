@@ -28,7 +28,6 @@ import anhttp.RequestMethod;
  * Wrapper over HTTP PUT request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class HttpPutWebRequest extends HttpPostWebRequest {
 

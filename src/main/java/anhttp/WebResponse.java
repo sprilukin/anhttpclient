@@ -31,7 +31,6 @@ import java.util.Map;
  * Wrapper under http response
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public interface WebResponse {
 

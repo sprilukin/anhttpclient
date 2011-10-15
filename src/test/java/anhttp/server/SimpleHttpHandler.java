@@ -29,7 +29,6 @@ import java.util.Map;
  * Class which encapsulates handler for HTTP request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public interface SimpleHttpHandler {
     public Map<String, String> getResponseHeaders();

@@ -28,7 +28,6 @@ import anhttp.RequestMethod;
  * Wrapper over HTTP OPTIONS request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class HttpOptionsWebRequest extends HttpGetWebRequest {
     public HttpOptionsWebRequest() {

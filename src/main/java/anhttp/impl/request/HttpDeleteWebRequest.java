@@ -28,7 +28,6 @@ import anhttp.RequestMethod;
  * Wrapper over HTTP DELETE request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class HttpDeleteWebRequest extends HttpGetWebRequest {
 

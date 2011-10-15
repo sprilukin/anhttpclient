@@ -38,7 +38,6 @@ import java.util.Properties;
  * (sometimes it won't works correctly)
  *
  * @author Sergey Pilukin
- * @version $Id$
  */
 public final class ThreadLocalWebBrowser implements WebBrowser {
 

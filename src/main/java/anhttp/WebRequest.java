@@ -29,7 +29,6 @@ import java.util.Map;
  * Used as easy wrapper under http request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public interface WebRequest {
     /**

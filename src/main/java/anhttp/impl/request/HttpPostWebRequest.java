@@ -43,7 +43,6 @@ import java.util.Map;
  * Wrapper over HTTP POST request
  *
  * @author Sergey Pilukin
- * @version $Id$
  */
 public class HttpPostWebRequest extends HttpGetWebRequest implements EntityEnclosingWebRequest {
     public static String OCTET_STREAM_MIME_TYPE = "application/octet-stream";

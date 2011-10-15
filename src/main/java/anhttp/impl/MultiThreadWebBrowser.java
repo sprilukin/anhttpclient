@@ -38,7 +38,6 @@ import java.util.Properties;
  * Difference from ThreadLocalWebBrowser is that this implementation share cookies and other params
  *
  * @author Sergey Pilukin
- * @version $Id$
  */
 public final class MultiThreadWebBrowser implements WebBrowser {
     private Map<String, WebBrowser> webBrowsersList = new HashMap<String, WebBrowser>(); 

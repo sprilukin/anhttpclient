@@ -26,7 +26,6 @@ package anhttp;
  * Constants for usage in implementations of {@link WebBrowser}
  *
  * @author Sergey Pilukin
- * @version $Id$
  */
 public final class HttpConstants {
 

@@ -28,7 +28,6 @@ import anhttp.RequestMethod;
  * Wrapper over HTTP TRACE request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class HttpTraceWebRequest extends HttpGetWebRequest {
 

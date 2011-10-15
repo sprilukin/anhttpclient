@@ -60,7 +60,6 @@ import java.util.zip.GZIPOutputStream;
  * Tests http client
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public class AnhttpTest {
 

@@ -33,7 +33,6 @@ import org.apache.http.params.HttpParams;
  * Basic {@link ClientConnectionManagerFactory} implementation
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class ClientConnectionManagerFactoryImpl implements ClientConnectionManagerFactory {
 

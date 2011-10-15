@@ -28,7 +28,6 @@ import anhttp.RequestMethod;
  * Wrapper over HTTP HEAD request
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class HttpHeadWebRequest extends HttpGetWebRequest {
 

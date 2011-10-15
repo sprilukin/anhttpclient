@@ -35,7 +35,6 @@ import java.util.Map;
  * data inside request body (like {@code POST, PUT})
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public interface EntityEnclosingWebRequest extends WebRequest {
 

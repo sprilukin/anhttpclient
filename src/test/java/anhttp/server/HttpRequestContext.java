@@ -35,7 +35,6 @@ import java.util.Map;
  * to allow access only for it's request related methods
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class HttpRequestContext {
     private HttpExchange httpExchange;

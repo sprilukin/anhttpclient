@@ -40,7 +40,6 @@ import java.util.Map;
  * which is suitable for integration tests
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public final class DefaultSimpleHttpServer implements SimpleHttpServer {
 

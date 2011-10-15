@@ -27,7 +27,6 @@ package anhttp;
  * See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">www.w3.org<a/>
  *
  * @author Sergey Pilukin
- * @version $Id$
  */
 public enum RequestMethod {
     GET,

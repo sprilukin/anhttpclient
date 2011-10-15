@@ -34,7 +34,6 @@ import java.util.Properties;
  * with minimum necessary methods
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public interface WebBrowser {
 

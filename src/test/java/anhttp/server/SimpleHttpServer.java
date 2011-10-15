@@ -29,7 +29,6 @@ import java.util.Map;
  * based on Sun Java 6 HTTP Server.
  *
  * @author Sergey Prilukin
- * @version $Id$
  */
 public interface SimpleHttpServer {
     public void start();
