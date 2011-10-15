@@ -1,13 +1,15 @@
 # Anhttp library
 
-## Anhttp library is intended to reduce amount of efforts to integrate robust and powerful Apache httpclient library into your code
+## anhttp library (acronym for "Another HTTP") intended to reduce amount of efforts to integrate robust and powerful Apache httpclient library into your code
 
 Example
 
     WebBrowser webBrowser = new DefaultWebBrowser();
-    WebResponse response = webBrowser.getResponse("http://code.google.com/p/anhttp");
+    WebResponse response = webBrowser.getResponse("http://someaddress.com");
     System.out.println(response.getText());
-    Using as maven dependency
+
+## Using as a maven dependency
+
     <dependency>
         <groupId>anhttp</groupId>
         <artifactId>anhttp</artifactId>
