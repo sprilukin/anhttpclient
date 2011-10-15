@@ -24,11 +24,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.googlecode.lighthttp</groupId>
-    <artifactId>lighthttp</artifactId>
+    <groupId>com.googlecode.anhttp</groupId>
+    <artifactId>anhttp</artifactId>
     <packaging>jar</packaging>
     <version>0.2</version>
-    <name>Light wrapper on top of httpclient</name>
+    <name>Lightweight wrapper on top of apache httpclient</name>
 
     <properties>
         <java.version>1.5</java.version>
