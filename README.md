@@ -16,15 +16,12 @@
         <version>0.3</version>
     </dependency>
 
-### Installing into local maven repository
+NOTE: you need to add maven repository to your pom.xml
 
-download last version of anhttp, its sources and pom file and then install them into local maven repository by running next command:
+    <repositories>
+        <repository>
+            <id>sprilukin-releases</id>
+            <url>https://raw.github.com/sprilukin/mvn-repo/master/releases</url>
+        </repository>
+    </repositories>
 
-    mvn install:install-file -DgroupId=anhttp \
-        -DartifactId=anhttp \
-        -Dversion=0.3 \
-        -Dfile=anhttp-0.3.jar \
-        -Dsources=anhttp-0.3-sources.jar \
-        -Dpackaging=jar \
-        -DpomFile=anhttp-0.3.pom \
-        -DcreateChecksum=true

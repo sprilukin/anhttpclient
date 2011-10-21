@@ -27,7 +27,7 @@
     <groupId>anhttp</groupId>
     <artifactId>anhttp</artifactId>
     <packaging>jar</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.3</version>
     <name>Another HTTP: a lightweight wrapper on top of apache httpclient</name>
 
     <properties>
