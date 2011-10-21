@@ -16,7 +16,7 @@
         <version>0.3</version>
     </dependency>
 
-NOTE: you need to add maven repository to your pom.xml
+NOTE: you need to add a maven repository to your pom.xml
 
     <repositories>
         <repository>
