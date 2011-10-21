@@ -27,13 +27,24 @@
     <groupId>anhttp</groupId>
     <artifactId>anhttp</artifactId>
     <packaging>jar</packaging>
-    <version>0.3</version>
+    <version>0.4-SNAPSHOT</version>
     <name>Another HTTP: a lightweight wrapper on top of apache httpclient</name>
 
     <properties>
         <java.version>1.5</java.version>
         <encoding>UTF-8</encoding>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>repo</id>
+            <url>https://raw.github.com/sprilukin/mvn-repo/master/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshot-repo</id>
+            <url>https://raw.github.com/sprilukin/mvn-repo/master/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <!-- Libs for test purposes -->
