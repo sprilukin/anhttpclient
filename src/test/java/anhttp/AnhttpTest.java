@@ -72,7 +72,7 @@ public class AnhttpTest {
     public void initialize() throws Exception {
         InputStream headersAsStream =
                 Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("com/googlecode/anhttp/defaultheaders.properties");
+                        .getResourceAsStream("anhttp/defaultheaders.properties");
 
         defaultHeaders = new Properties();
         defaultHeaders.load(headersAsStream);
