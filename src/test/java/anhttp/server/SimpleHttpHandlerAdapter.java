@@ -22,34 +22,51 @@
 
 package anhttp.server;
 
-import sun.net.www.protocol.http.HttpURLConnection;
-
+import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Adapter which implements most methods of {@link SimpleHttpHandler}
+ * So descendants should only implement method {@link SimpleHttpHandler#getResponse(HttpRequestContext)}
  *
  * @author Sergey Prilukin
  */
 public abstract class SimpleHttpHandlerAdapter implements SimpleHttpHandler {
     private Map<String, String> headers = new HashMap<String, String>();
 
-    public void setResponseHeaders(Map<String, String> headers) {
+    /**
+     * Utility method which allows several response headers in one call.
+     *
+     * @param headers response headers which will be sent with response
+     */
+    protected void setResponseHeaders(Map<String, String> headers) {
         if (headers != null && headers.size() > 0) {
             this.headers.putAll(headers);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map<String, String> getResponseHeaders() {
         return Collections.unmodifiableMap(headers);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void setResponseHeader(String name, String value) {
         headers.put(name, value);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * If not overridden - returns status 200
+     * which means HTTP OK
+     */
     public int getResponseCode(HttpRequestContext httpRequestContext) {
         return HttpURLConnection.HTTP_OK;
     }

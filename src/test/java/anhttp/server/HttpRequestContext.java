@@ -40,6 +40,10 @@ public final class HttpRequestContext {
     private HttpExchange httpExchange;
     private byte[] requestBody;
 
+    /**
+     * Create wrapper from passed {@code httpExcahnge} param
+     * @param httpExcahnge instance if {@link HttpExchange} for current request
+     */
     public HttpRequestContext(HttpExchange httpExcahnge) {
         this.httpExchange = httpExcahnge;
         try {
@@ -49,22 +53,48 @@ public final class HttpRequestContext {
         }
     }
 
+    /**
+     * Return request attribute for specified key
+     *
+     * @param key key
+     * @return attribute value for specified key
+     */
     public Object getAttribute(String key) {
         return httpExchange.getAttribute(key);
     }
 
+    /**
+     * Return all request headers.
+     *
+     * @return all request headers
+     */
     public Map<String, List<String>> getRequestHeaders() {
         return httpExchange.getRequestHeaders();
     }
 
+    /**
+     * Return HTTP method of the request,
+     * for example "GET", "POST", etc.
+     *
+     * @return string which represents HTTP request method
+     */
     public String getRequestMethod() {
         return httpExchange.getRequestMethod();
     }
 
-    public byte[] getRequestBody() throws IOException {
+    /**
+     * Return byte array of request body.
+     *
+     * @return byte array of request body
+     */
+    public byte[] getRequestBody() {
         return requestBody;
     }
 
+    /**
+     * Return {@link URI} of request
+     * @return {@link URI} of request
+     */
     public URI getRequestURI() {
         return httpExchange.getRequestURI();
     }

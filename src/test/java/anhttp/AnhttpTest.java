@@ -255,14 +255,10 @@ public class AnhttpTest {
 
         server.addHandler("/postWithBody", new SimpleHttpHandlerAdapter() {
             public byte[] getResponse(HttpRequestContext httpRequestContext) {
-                try {
-                    byte[] body = httpRequestContext.getRequestBody();
-                    assertEquals(
-                            requestBody.replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"),
-                            new String(body).replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                byte[] body = httpRequestContext.getRequestBody();
+                assertEquals(
+                        requestBody.replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"),
+                        new String(body).replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"));
 
                 assertEquals("Method should be POST", "POST", httpRequestContext.getRequestMethod());
                 assertTrue(httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0)

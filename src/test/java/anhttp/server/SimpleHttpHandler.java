@@ -26,13 +26,68 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Class which encapsulates handler for HTTP request
+ * <p>Class which encapsulates handler for HTTP request.</p>
+ *
+ * <p>
+ *     Example of usage:<br/>
+ *
+ *     <pre>
+ *         SimpleHttpServer server = new DefaultSimpleHttpServer();
+ *         server.start();
+ *
+ *         server.addHandler("/index", new SimpleHttpHandlerAdapter() {
+ *             public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException {
+ *                 return "Hello world".getBytes();
+ *             }
+ *         });
+ *     </pre>
+ *
+ *     <p>In this example we add handler for path "/index",
+ *     so anytime client access {@code http://localhost:8000/index}
+ *     "Hello world" will be sent as response.</p>
+ *
+ *     <p>
+ *         All methods declared here will be used by implementations of
+ *         SimpleHttpServer.
+ *     </p>
+ * </p>
  *
  * @author Sergey Prilukin
  */
 public interface SimpleHttpHandler {
+
+    /**
+     * Return unmodifiable collection of response headers
+     *
+     * @return collection of response headers.
+     */
     public Map<String, String> getResponseHeaders();
+
+    /**
+     * Set a single response header.
+     *
+     * @param name name of the header
+     * @param value value of the header
+     */
     public void setResponseHeader(String name, String value);
+
+    /**
+     * Return response code.
+     *
+     * @param httpRequestContext instance of {@link HttpRequestContext} -
+     *  facade for {@link com.sun.net.httpserver.HttpExchange}
+     * @return response code
+     * @see java.net.HttpURLConnection
+     */
     public int getResponseCode(HttpRequestContext httpRequestContext);
+
+    /**
+     * Return byte array with response.
+     *
+     * @param httpRequestContext instance of {@link HttpRequestContext} -
+     *  facade for {@link com.sun.net.httpserver.HttpExchange}
+     * @return byte array with response
+     * @throws IOException if exception occurs during getting response
+     */
     public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException;
 }

@@ -26,18 +26,21 @@ import anhttp.RequestMethod;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.IOException;
 import java.net.BindException;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Wrapper over Sun Java 6 HTTP Server
- * which is suitable for integration tests
+ * Default implementation of {@link SimpleHttpServer}
+ * Which has predefined host and port.
+ *
+ * {@link com.sun.net.httpserver.HttpServer} is used
+ * at the backend.
  *
  * @author Sergey Prilukin
  */
@@ -56,6 +59,7 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
     private int port = DEFAULT_PORT;
     private Map<String, SimpleHttpHandler> handlers = new HashMap<String, SimpleHttpHandler>();
     private Map<String, String> defaultHeaders = new HashMap<String, String>();
+
     private final Object handlersMonitor = new Object();
     private final Object headersMonitor = new Object();
 
@@ -78,31 +82,34 @@ public final class DefaultSimpleHttpServer implements SimpleHttpServer {
         }
 
         private void internalHandleRequest(SimpleHttpHandler handler, HttpExchange httpExchange) throws IOException {
-            HttpRequestContext httpRequestContext = new HttpRequestContext(httpExchange);
+            try {
+                HttpRequestContext httpRequestContext = new HttpRequestContext(httpExchange);
 
-            byte[] response = handler.getResponse(httpRequestContext);
+                //Call getReponse of passed handler
+                byte[] response = handler.getResponse(httpRequestContext);
 
-            //Add default headers
-            for (Map.Entry<String, String> entry: defaultHeaders.entrySet()) {
-                httpExchange.getResponseHeaders().add(entry.getKey(), entry.getValue());
-            }
-
-            //Add headers from handler
-            if (handler.getResponseHeaders() != null && handler.getResponseHeaders().size() > 0) {
-                for (Map.Entry<String, String> entry: handler.getResponseHeaders().entrySet()) {
+                //Add default headers
+                for (Map.Entry<String, String> entry: defaultHeaders.entrySet()) {
                     httpExchange.getResponseHeaders().add(entry.getKey(), entry.getValue());
                 }
+
+                //Add headers from handler
+                if (handler.getResponseHeaders() != null && handler.getResponseHeaders().size() > 0) {
+                    for (Map.Entry<String, String> entry: handler.getResponseHeaders().entrySet()) {
+                        httpExchange.getResponseHeaders().add(entry.getKey(), entry.getValue());
+                    }
+                }
+
+
+                httpExchange.sendResponseHeaders(handler.getResponseCode(httpRequestContext), response != null ? response.length : 0);
+
+                if (response != null && response.length > 0
+                        && !RequestMethod.HEAD.toString().equals(httpExchange.getRequestMethod())) {
+                    httpExchange.getResponseBody().write(response);
+                }
+            } finally {
+                httpExchange.close();
             }
-
-
-            httpExchange.sendResponseHeaders(handler.getResponseCode(httpRequestContext), response != null ? response.length : 0);
-
-            if (response != null && response.length > 0
-                    && !RequestMethod.HEAD.toString().equals(httpExchange.getRequestMethod())) {
-                httpExchange.getResponseBody().write(response);
-            }
-
-            httpExchange.close();
         }
 
         public void handle(HttpExchange httpExchange) throws IOException {
