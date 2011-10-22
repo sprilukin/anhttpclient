@@ -61,7 +61,8 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git@github.com:sprilukin/anhttp.git</connection>
+        <!--<connection>scm:git:git@github.com:sprilukin/anhttp.git</connection>-->
+        <connection>scm:git:git://github.com/sprilukin/anhttp.git</connection>
     </scm>
 
     <dependencies>
