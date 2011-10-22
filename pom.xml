@@ -27,8 +27,9 @@
     <groupId>anhttp</groupId>
     <artifactId>anhttp</artifactId>
     <packaging>jar</packaging>
-    <version>0.3.1-SNAPSHOT</version>
-    <name>Another HTTP: a lightweight wrapper on top of apache httpclient</name>
+    <version>0.3.1</version>
+    <name>Another HTTP</name>
+    <description>A lightweight wrapper on top of apache httpclient</description>
 
     <licenses>
         <license>
@@ -63,6 +64,13 @@
     <scm>
         <developerConnection>scm:git:[fetch=]git://github.com/sprilukin/anhttp.git[push=]git@github.com:sprilukin/anhttp.git</developerConnection>
     </scm>
+
+    <repositories>
+        <repository>
+            <id>sprilukin-releases</id>
+            <url>https://raw.github.com/sprilukin/mvn-repo/master/releases</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <!-- Libs for test purposes -->
@@ -100,6 +108,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.4.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>anhttpserver</groupId>
+            <artifactId>anhttpserver</artifactId>
+            <version>0.1</version>
             <scope>test</scope>
         </dependency>
 
