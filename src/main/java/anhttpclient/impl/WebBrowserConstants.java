@@ -20,36 +20,40 @@
  * SOFTWARE.
  */
 
-package anhttp.impl.request;
-
-import anhttp.RequestMethod;
+package anhttpclient.impl;
 
 /**
- * Wrapper over HTTP PUT request
+ * Constants for usage in implementations of {@link anhttpclient.WebBrowser}
  *
  * @author Sergey Prilukin
  */
-public final class HttpPutWebRequest extends HttpPostWebRequest {
-
-    public HttpPutWebRequest() {
-        /* Default constructor */
-    }
+public final class WebBrowserConstants {
 
     /**
-     * {@inheritDoc}
+     * Default user-agent.
+     * May be replaced with {@code User-Agent} request header
      */
-    public HttpPutWebRequest(String url) {
-        super(url);
-    }
+    public static final String DEFAULT_USER_AGENT = "anhttpclient/0.3.1";
 
     /**
-     * {@inheritDoc}
-     * <br/>
-     *
-     * @return {@link RequestMethod#PUT} because this is implementation of HTTP PUT request
+     * Default count if retrying unsuccessful HTTP request
      */
-    @Override
-    public RequestMethod getRequestMethod() {
-        return RequestMethod.PUT;
-    }
+    public static final int DEFAULT_RETRY_COUNT = 3;
+
+    /**
+     * Default request socket timeout
+     */
+    public static final int DEFAULT_SOCKET_TIMEOUT = 60000;
+
+    /**
+     * Default connection timeout
+     */
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
+
+    /**
+     * Default class name of implementation of
+     * {@link org.apache.http.conn.ClientConnectionManagerFactory}
+     */
+    public static final String DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME =
+            "anhttpclient.impl.ClientConnectionManagerFactoryImpl";
 }

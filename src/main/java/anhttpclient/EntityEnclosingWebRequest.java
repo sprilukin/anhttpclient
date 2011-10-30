@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package anhttp;
+package anhttpclient;
 
 import org.apache.http.entity.mime.content.ContentBody;
 

@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-package anhttp.impl;
+package anhttpclient.impl;
 
-import anhttp.RequestMethod;
-import anhttp.WebResponse;
+import anhttpclient.RequestMethod;
+import anhttpclient.WebResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;

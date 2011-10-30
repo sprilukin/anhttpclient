@@ -20,14 +20,14 @@
  * SOFTWARE.
  */
 
-package anhttp.impl;
+package anhttpclient.impl;
 
-import anhttp.HttpConstants;
-import anhttp.WebBrowser;
-import anhttp.WebRequest;
-import anhttp.WebResponse;
-import anhttp.EntityEnclosingWebRequest;
-import anhttp.impl.request.HttpGetWebRequest;
+import anhttpclient.HttpConstants;
+import anhttpclient.WebBrowser;
+import anhttpclient.WebRequest;
+import anhttpclient.WebResponse;
+import anhttpclient.EntityEnclosingWebRequest;
+import anhttpclient.impl.request.HttpGetWebRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -87,7 +87,7 @@ import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
 /**
- * Default implementation of {@link anhttp.WebBrowser}
+ * Default implementation of {@link anhttpclient.WebBrowser}
  * Has such configurable parameters:
  * - default headers    : Collection of HTTP headers which will be sent with every http request
  * - retry count        : count of repeating http request if previous one was unsuccessful
@@ -183,7 +183,6 @@ public class DefaultWebBrowser implements WebBrowser {
                 public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
                     HttpEntity entity = response.getEntity();
                     if (entity == null) {
-                        log.debug("ANHTTP. Response entity is NULL");
                         return;
                     }
 
@@ -317,7 +316,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private HttpResponse executeMethod(HttpUriRequest httpUriRequest) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: httpUriRequest.getAllHeaders()) {
-                log.debug(String.format("ANHTTP. Request header: [%s: %s]", header.getName(), header.getValue()));
+                log.debug(String.format("ANHTTPCLIENT. Request header: [%s: %s]", header.getName(), header.getValue()));
             }
         }
 
@@ -425,7 +424,7 @@ public class DefaultWebBrowser implements WebBrowser {
     private WebResponse processResponse(HttpResponse response, HttpRequestBase httpMethodBase, String charset) throws IOException {
         if (log.isDebugEnabled()) {
             for (Header header: response.getAllHeaders()) {
-                log.debug(String.format("ANHTTP. Response header: [%s: %s]", header.getName(), header.getValue()));
+                log.debug(String.format("ANHTTPCLIENT. Response header: [%s: %s]", header.getName(), header.getValue()));
             }
         }
 
@@ -475,7 +474,7 @@ public class DefaultWebBrowser implements WebBrowser {
 
         HttpResponse response = executeMethod(httpRequest.get());
         if (response == null) {
-            throw new IOException("ANHTTP. An empty response received from server. Possible reason: host is offline");
+            throw new IOException("ANHTTPCLIENT. An empty response received from server. Possible reason: host is offline");
         }
 
         resp = processResponse(response, httpRequest.get(), charset);

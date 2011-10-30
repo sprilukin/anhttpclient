@@ -20,20 +20,35 @@
  * SOFTWARE.
  */
 
-package anhttp;
+package anhttpclient.impl.request;
+
+import anhttpclient.RequestMethod;
 
 /**
- * Represents types of HTTP request. <br />
- * See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">www.w3.org<a/>
+ * Wrapper over HTTP OPTIONS request
  *
- * @author Sergey Pilukin
+ * @author Sergey Prilukin
  */
-public enum RequestMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    HEAD,
-    OPTIONS,
-    TRACE
+public final class HttpOptionsWebRequest extends HttpGetWebRequest {
+    public HttpOptionsWebRequest() {
+        /* Default constructor */
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public HttpOptionsWebRequest(String url) {
+        super(url);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <br/>
+     *
+     * @return {@link RequestMethod#OPTIONS} because this is implementation of HTTP OPTIONS request
+     */
+    @Override
+    public RequestMethod getRequestMethod() {
+        return RequestMethod.OPTIONS;
+    }
 }

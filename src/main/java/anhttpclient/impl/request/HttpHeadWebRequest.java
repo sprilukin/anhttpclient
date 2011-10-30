@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-package anhttp.impl.request;
+package anhttpclient.impl.request;
 
-import anhttp.RequestMethod;
+import anhttpclient.RequestMethod;
 
 /**
  * Wrapper over HTTP HEAD request
@@ -46,7 +46,7 @@ public final class HttpHeadWebRequest extends HttpGetWebRequest {
      * {@inheritDoc}
      * <br/>
      *
-     * @return {@link anhttp.RequestMethod#HEAD} because this is implementation of HTTP HEAD request
+     * @return {@link anhttpclient.RequestMethod#HEAD} because this is implementation of HTTP HEAD request
      */
     @Override
     public RequestMethod getRequestMethod() {

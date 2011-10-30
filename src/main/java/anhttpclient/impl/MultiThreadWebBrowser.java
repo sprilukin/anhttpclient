@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package anhttp.impl;
+package anhttpclient.impl;
 
-import anhttp.WebBrowser;
-import anhttp.WebResponse;
-import anhttp.WebRequest;
+import anhttpclient.WebBrowser;
+import anhttpclient.WebResponse;
+import anhttpclient.WebRequest;
 import org.apache.http.cookie.Cookie;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Thread safe implementation of {@link anhttp.WebBrowser}
+ * Thread safe implementation of {@link anhttpclient.WebBrowser}
  * Difference from ThreadLocalWebBrowser is that this implementation share cookies and other params
  *
  * @author Sergey Pilukin

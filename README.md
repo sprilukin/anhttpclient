@@ -1,6 +1,6 @@
-# Anhttp library
+# Anhttpclient library
 
-## anhttp library (acronym for "Another HTTP") intended to reduce amount of efforts to integrate robust and powerful Apache httpclient library into your code
+## anhttpclient library (acronym for "Another HTTP client") intended to reduce amount of efforts to integrate robust and powerful Apache httpclient library into your code
 
 ### Example
 
@@ -11,9 +11,9 @@
 ### Using as a maven dependency
 
     <dependency>
-        <groupId>anhttp</groupId>
-        <artifactId>anhttp</artifactId>
-        <version>0.3</version>
+        <groupId>anhttpclient</groupId>
+        <artifactId>anhttpclient</artifactId>
+        <version>0.3.1</version>
     </dependency>
 
 NOTE: you need to add a maven repository to your pom.xml

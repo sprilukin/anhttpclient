@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package anhttp;
+package anhttpclient;
 
 import java.net.MalformedURLException;
 import java.util.Map;

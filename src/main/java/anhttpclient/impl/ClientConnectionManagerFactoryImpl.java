@@ -20,36 +20,37 @@
  * SOFTWARE.
  */
 
-package anhttp.impl.request;
+package anhttpclient.impl;
 
-import anhttp.RequestMethod;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ClientConnectionManagerFactory;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.HttpParams;
 
 /**
- * Wrapper over HTTP TRACE request
+ * Basic {@link ClientConnectionManagerFactory} implementation
  *
  * @author Sergey Prilukin
  */
-public final class HttpTraceWebRequest extends HttpGetWebRequest {
+public final class ClientConnectionManagerFactoryImpl implements ClientConnectionManagerFactory {
 
-    public HttpTraceWebRequest() {
-        /* Default constructor */
-    }
+    /**
+     * Name of the property in {@link org.apache.http.params.HttpParams}
+     * Which will be used to determine whether thread-safe connection manager should be used
+     */
+    public static final String THREAD_SAFE_CONNECTION_MANAGER = "thread.safe.connection.manager";
 
     /**
      * {@inheritDoc}
      */
-    public HttpTraceWebRequest(String url) {
-        super(url);
-    }
+    public ClientConnectionManager newInstance(HttpParams params, SchemeRegistry schemeRegistry) {
+        if (params != null) {
+            boolean threadSafe = params.getBooleanParameter(THREAD_SAFE_CONNECTION_MANAGER, false);
+            return threadSafe ? new ThreadSafeClientConnManager(schemeRegistry) : new SingleClientConnManager(schemeRegistry);
+        }
 
-    /**
-     * {@inheritDoc}
-     * <br/>
-     *
-     * @return {@link anhttp.RequestMethod#PUT} because this is implementation of HTTP PUT request
-     */
-    @Override
-    public RequestMethod getRequestMethod() {
-        return RequestMethod.TRACE;
+        return new SingleClientConnManager(schemeRegistry);
     }
 }

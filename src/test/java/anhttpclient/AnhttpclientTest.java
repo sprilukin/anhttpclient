@@ -20,20 +20,20 @@
  * SOFTWARE.
  */
 
-package anhttp;
+package anhttpclient;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import anhttp.impl.DefaultWebBrowser;
-import anhttp.impl.request.HttpDeleteWebRequest;
-import anhttp.impl.request.HttpGetWebRequest;
-import anhttp.impl.request.HttpHeadWebRequest;
-import anhttp.impl.request.HttpOptionsWebRequest;
-import anhttp.impl.request.HttpPostWebRequest;
-import anhttp.impl.request.HttpPutWebRequest;
-import anhttp.impl.request.HttpTraceWebRequest;
+import anhttpclient.impl.DefaultWebBrowser;
+import anhttpclient.impl.request.HttpDeleteWebRequest;
+import anhttpclient.impl.request.HttpGetWebRequest;
+import anhttpclient.impl.request.HttpHeadWebRequest;
+import anhttpclient.impl.request.HttpOptionsWebRequest;
+import anhttpclient.impl.request.HttpPostWebRequest;
+import anhttpclient.impl.request.HttpPutWebRequest;
+import anhttpclient.impl.request.HttpTraceWebRequest;
 import anhttpserver.DefaultSimpleHttpServer;
 import anhttpserver.HttpRequestContext;
 import anhttpserver.SimpleHttpHandlerAdapter;
@@ -61,7 +61,7 @@ import java.util.zip.GZIPOutputStream;
  *
  * @author Sergey Prilukin
  */
-public class AnhttpTest {
+public class AnhttpclientTest {
 
     private WebBrowser wb;
     private Properties defaultHeaders;
@@ -72,7 +72,7 @@ public class AnhttpTest {
     public void initialize() throws Exception {
         InputStream headersAsStream =
                 Thread.currentThread().getContextClassLoader()
-                        .getResourceAsStream("anhttp/defaultheaders.properties");
+                        .getResourceAsStream("anhttpclient/defaultheaders.properties");
 
         defaultHeaders = new Properties();
         defaultHeaders.load(headersAsStream);

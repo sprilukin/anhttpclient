@@ -20,12 +20,12 @@
  * SOFTWARE.
  */
 
-package anhttp.impl.request;
+package anhttpclient.impl.request;
 
-import anhttp.HttpConstants;
-import anhttp.WebResponse;
-import anhttp.RequestMethod;
-import anhttp.WebRequest;
+import anhttpclient.HttpConstants;
+import anhttpclient.WebResponse;
+import anhttpclient.RequestMethod;
+import anhttpclient.WebRequest;
 
 import java.net.MalformedURLException;
 import java.util.Collections;
@@ -179,7 +179,7 @@ public class HttpGetWebRequest implements WebRequest {
      * {@inheritDoc}
      * <br/>
      *
-     * @return {@link anhttp.RequestMethod#GET} because this is implementation of HTTP GET request
+     * @return {@link anhttpclient.RequestMethod#GET} because this is implementation of HTTP GET request
      */
     public RequestMethod getRequestMethod() {
         return RequestMethod.GET;

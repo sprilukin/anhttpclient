@@ -20,40 +20,36 @@
  * SOFTWARE.
  */
 
-package anhttp.impl;
+package anhttpclient.impl.request;
+
+import anhttpclient.RequestMethod;
 
 /**
- * Constants for usage in implementations of {@link anhttp.WebBrowser}
+ * Wrapper over HTTP DELETE request
  *
  * @author Sergey Prilukin
  */
-public final class WebBrowserConstants {
+public final class HttpDeleteWebRequest extends HttpGetWebRequest {
+
+    public HttpDeleteWebRequest() {
+        /* Default constructor */
+    }
 
     /**
-     * Default user-agent.
-     * May be replaced with {@code User-Agent} request header
+     * {@inheritDoc}
      */
-    public static final String DEFAULT_USER_AGENT = "anhttp/0.2";
+    public HttpDeleteWebRequest(String url) {
+        super(url);
+    }
 
     /**
-     * Default count if retrying unsuccessful HTTP request
+     * {@inheritDoc}
+     * <br/>
+     *
+     * @return {@link RequestMethod#DELETE because this is implementation of HTTP DELETE request
      */
-    public static final int DEFAULT_RETRY_COUNT = 3;
-
-    /**
-     * Default request socket timeout
-     */
-    public static final int DEFAULT_SOCKET_TIMEOUT = 60000;
-
-    /**
-     * Default connection timeout
-     */
-    public static final int DEFAULT_CONNECTION_TIMEOUT = 30000;
-
-    /**
-     * Default class name of implementation of
-     * {@link org.apache.http.conn.ClientConnectionManagerFactory}
-     */
-    public static final String DEFAULT_CLIENT_CONNECTION_FACTORY_CLASS_NAME =
-            "anhttp.impl.ClientConnectionManagerFactoryImpl";
+    @Override
+    public RequestMethod getRequestMethod() {
+        return RequestMethod.DELETE;
+    }
 }

@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-package anhttp.impl.request;
+package anhttpclient.impl.request;
 
-import anhttp.RequestMethod;
-import anhttp.EntityEnclosingWebRequest;
+import anhttpclient.RequestMethod;
+import anhttpclient.EntityEnclosingWebRequest;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;

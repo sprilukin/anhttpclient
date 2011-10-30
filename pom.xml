@@ -24,18 +24,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>anhttp</groupId>
-    <artifactId>anhttp</artifactId>
+    <groupId>anhttpclient</groupId>
+    <artifactId>anhttpclient</artifactId>
     <packaging>jar</packaging>
     <version>0.3.1</version>
-    <name>Another HTTP</name>
+    <name>Another HTTP client</name>
     <description>A lightweight wrapper on top of apache httpclient</description>
-    <url>https://github.com/sprilukin/anhttp</url>
+    <url>https://github.com/sprilukin/anhttpclient</url>
 
     <licenses>
         <license>
             <name>MIT</name>
-            <url>https://raw.github.com/sprilukin/anhttp/master/LICENSE</url>
+            <url>https://raw.github.com/sprilukin/anhttpclient/master/LICENSE</url>
         </license>
     </licenses>
 
@@ -92,7 +92,7 @@
         <dependency>
             <groupId>anhttpserver</groupId>
             <artifactId>anhttpserver</artifactId>
-            <version>0.2</version>
+            <version>0.2.2</version>
             <scope>test</scope>
         </dependency>
 

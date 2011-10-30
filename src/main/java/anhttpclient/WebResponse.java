@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package anhttp;
+package anhttpclient;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

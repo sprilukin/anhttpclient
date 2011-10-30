@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package anhttp.impl;
+package anhttpclient.impl;
 
-import anhttp.WebBrowser;
-import anhttp.WebRequest;
-import anhttp.WebResponse;
+import anhttpclient.WebBrowser;
+import anhttpclient.WebRequest;
+import anhttpclient.WebResponse;
 import org.apache.http.cookie.Cookie;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Thread safe implementation of {@link anhttp.WebBrowser}
+ * Thread safe implementation of {@link anhttpclient.WebBrowser}
  * Use it if you do not want to rely on httpclient's thread safe client connection manager
  * (sometimes it won't works correctly)
  *

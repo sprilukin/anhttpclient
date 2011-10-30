@@ -20,35 +20,28 @@
  * SOFTWARE.
  */
 
-package anhttp.impl.request;
-
-import anhttp.RequestMethod;
+package anhttpclient;
 
 /**
- * Wrapper over HTTP OPTIONS request
+ * Constants for usage in implementations of {@link WebBrowser}
  *
- * @author Sergey Prilukin
+ * @author Sergey Pilukin
  */
-public final class HttpOptionsWebRequest extends HttpGetWebRequest {
-    public HttpOptionsWebRequest() {
-        /* Default constructor */
-    }
+public final class HttpConstants {
 
     /**
-     * {@inheritDoc}
+     * HTTP header which indicates that gzip encoding was used HTTP in response
      */
-    public HttpOptionsWebRequest(String url) {
-        super(url);
-    }
+    public static final String GZIP = "gzip";
 
     /**
-     * {@inheritDoc}
-     * <br/>
-     *
-     * @return {@link RequestMethod#OPTIONS} because this is implementation of HTTP OPTIONS request
+     * HTTP header which indicates referer URL
      */
-    @Override
-    public RequestMethod getRequestMethod() {
-        return RequestMethod.OPTIONS;
-    }
+    public static final String REFERER_HEADER = "Referer";
+
+    /**
+     * HTTP Request body parameter which indicates type of data in request body
+     */
+    public static final String MIME_FORM_ENCODED = "application/x-www-form-urlencoded";
+
 }

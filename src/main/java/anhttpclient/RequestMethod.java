@@ -20,28 +20,20 @@
  * SOFTWARE.
  */
 
-package anhttp;
+package anhttpclient;
 
 /**
- * Constants for usage in implementations of {@link WebBrowser}
+ * Represents types of HTTP request. <br />
+ * See <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">www.w3.org<a/>
  *
  * @author Sergey Pilukin
  */
-public final class HttpConstants {
-
-    /**
-     * HTTP header which indicates that gzip encoding was used HTTP in response
-     */
-    public static final String GZIP = "gzip";
-
-    /**
-     * HTTP header which indicates referer URL
-     */
-    public static final String REFERER_HEADER = "Referer";
-
-    /**
-     * HTTP Request body parameter which indicates type of data in request body
-     */
-    public static final String MIME_FORM_ENCODED = "application/x-www-form-urlencoded";
-
+public enum RequestMethod {
+    GET,
+    POST,
+    PUT,
+    DELETE,
+    HEAD,
+    OPTIONS,
+    TRACE
 }
