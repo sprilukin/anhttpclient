@@ -34,9 +34,9 @@ import anhttpclient.impl.request.HttpOptionsWebRequest;
 import anhttpclient.impl.request.HttpPostWebRequest;
 import anhttpclient.impl.request.HttpPutWebRequest;
 import anhttpclient.impl.request.HttpTraceWebRequest;
+import anhttpserver.ByteArrayHandlerAdapter;
 import anhttpserver.DefaultSimpleHttpServer;
 import anhttpserver.HttpRequestContext;
-import anhttpserver.SimpleHttpHandlerAdapter;
 import anhttpserver.SimpleHttpServer;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.protocol.HTTP;
@@ -104,8 +104,8 @@ public class AnhttpclientTest {
         final String methodParamName = "method";
         final String responseText = "Hello from SimpleHttperver";
 
-        server.addHandler("/index", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException {
+        server.addHandler("/index", new ByteArrayHandlerAdapter() {
+            public byte[] getResponseAsByteArray(HttpRequestContext httpRequestContext) throws IOException {
                 URI requestURI = httpRequestContext.getRequestURI();
                 assertEquals(methodParamName, requestURI.getQuery().split("=")[0]);
                 String method = requestURI.getQuery().split("=")[1];
@@ -165,8 +165,8 @@ public class AnhttpclientTest {
         params.put("some_chars", "!@#$%^&*()_+|");
 
 
-        server.addHandler("/formParams", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) throws IOException {
+        server.addHandler("/formParams", new ByteArrayHandlerAdapter() {
+            public byte[] getResponseAsByteArray(HttpRequestContext httpRequestContext) throws IOException {
                 assertEquals("Form should be url-encoded",
                         "application/x-www-form-urlencoded; charset=UTF-8",
                         httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0));
@@ -207,8 +207,8 @@ public class AnhttpclientTest {
 
         final String responseText = "Hello from SimpleHttperver";
 
-        server.addHandler("/gzip", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+        server.addHandler("/gzip", new ByteArrayHandlerAdapter() {
+            public byte[] getResponseAsByteArray(HttpRequestContext httpRequestContext) {
                 byte[] out;
 
                 try {
@@ -222,8 +222,7 @@ public class AnhttpclientTest {
                     throw new RuntimeException(e);
                 }
 
-                setResponseHeader("Content-Encoding", "gzip");
-                setResponseHeader("Content-length", String.valueOf(out.length));
+                setResponseHeader("Content-Encoding", "gzip", httpRequestContext);
                 return out;
             }
         });
@@ -253,8 +252,8 @@ public class AnhttpclientTest {
                 "Test request body string\n" +
                 "--zeNfQFxOvIRY_1tTWU-9ArUdJpMkKi9--";
 
-        server.addHandler("/postWithBody", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+        server.addHandler("/postWithBody", new ByteArrayHandlerAdapter() {
+            public byte[] getResponseAsByteArray(HttpRequestContext httpRequestContext) {
                 byte[] body = httpRequestContext.getRequestBody();
                 assertEquals(
                         requestBody.replaceAll("--.*", "").replaceAll("[\\r\\n]+", "\\n"),
@@ -264,7 +263,7 @@ public class AnhttpclientTest {
                 assertTrue(httpRequestContext.getRequestHeaders().get(HTTP.CONTENT_TYPE).get(0)
                         .contains("multipart/form-data"));
 
-                return null;
+                return "OK".getBytes();
             }
         });
 
@@ -292,21 +291,21 @@ public class AnhttpclientTest {
 
         final AtomicInteger requestCount = new AtomicInteger(0);
 
-        server.addHandler("/cookies", new SimpleHttpHandlerAdapter() {
-            public byte[] getResponse(HttpRequestContext httpRequestContext) {
+        server.addHandler("/cookies", new ByteArrayHandlerAdapter() {
+            public byte[] getResponseAsByteArray(HttpRequestContext httpRequestContext) {
                 requestCount.addAndGet(1);
 
                 if (requestCount.get() == 1) {
-                    setResponseHeader("Set-Cookie", cookieName1 + "=" + cookieValue1 + "; " + cookieParams1);
+                    setResponseHeader("Set-Cookie", cookieName1 + "=" + cookieValue1 + "; " + cookieParams1, httpRequestContext);
                 } else if (requestCount.get() == 2) {
                     assertEquals(cookieName1 + "=" + cookieValue1, httpRequestContext.getRequestHeaders().get("Cookie").get(0));
-                    setResponseHeader("Set-Cookie", cookieName2 + "=" + cookieValue2 + "; " + cookieParams2);
+                    setResponseHeader("Set-Cookie", cookieName2 + "=" + cookieValue2 + "; " + cookieParams2, httpRequestContext);
                 } else {
                     //Sends only one cookie somewhy
                     //assertEquals(cookieName1 + "; " + cookieName2, httpRequestContext.getRequestHeaders().get("Cookie"));
                 }
 
-                return null;
+                return "OK".getBytes();
             }
         });
 
