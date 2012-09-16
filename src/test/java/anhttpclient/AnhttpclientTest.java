@@ -35,9 +35,9 @@ import anhttpclient.impl.request.HttpPostWebRequest;
 import anhttpclient.impl.request.HttpPutWebRequest;
 import anhttpclient.impl.request.HttpTraceWebRequest;
 import anhttpserver.ByteArrayHandlerAdapter;
-import anhttpserver.DefaultSimpleHttpServer;
+import anhttpserver.DefaultHttpServer;
 import anhttpserver.HttpRequestContext;
-import anhttpserver.SimpleHttpServer;
+import anhttpserver.HttpServer;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.protocol.HTTP;
 import org.junit.After;
@@ -66,7 +66,7 @@ public class AnhttpclientTest {
     private WebBrowser wb;
     private Properties defaultHeaders;
     private Map<RequestMethod, Class<? extends WebRequest>> allRequests;
-    private SimpleHttpServer server;
+    private HttpServer server;
 
     @Before
     public void initialize() throws Exception {
@@ -90,7 +90,7 @@ public class AnhttpclientTest {
         allRequests.put(RequestMethod.PUT, HttpPutWebRequest.class);
         allRequests.put(RequestMethod.TRACE, HttpTraceWebRequest.class);
 
-        server = new DefaultSimpleHttpServer();
+        server = new DefaultHttpServer();
         server.start();
     }
 
@@ -122,7 +122,7 @@ public class AnhttpclientTest {
                         headersSize, httpRequestContext.getRequestHeaders().size() - 1);
                 assertEquals("Host request header is unexpected",
                         httpRequestContext.getRequestHeaders().get("Host").get(0),
-                        DefaultSimpleHttpServer.DEFAULT_HOST + ":" + server.getPort());
+                        DefaultHttpServer.DEFAULT_HOST + ":" + server.getPort());
 
                 for (Map.Entry<String, List<String>> entry: httpRequestContext.getRequestHeaders().entrySet()) {
 
